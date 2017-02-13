@@ -1,6 +1,8 @@
 # simple-signal
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 ## Features
 - streamlines WebRTC signalling without losing any flexibility
 - exposes the entire **simple-peer** API
