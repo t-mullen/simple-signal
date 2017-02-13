@@ -92,5 +92,5 @@ Optional listener allows you to filter connection requests on the server.
 `id` of the peer that will receive the request.
 
 ###`request.forward([id])`  
-Allow the request to continue. Not calling this method will block the request.  
+Allow the request to continue. *Not calling this method will block the request.*  
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers.  
