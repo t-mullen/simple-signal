@@ -1,8 +1,6 @@
 # simple-signal
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
-
 ## Features
 - Streamlines WebRTC signalling without losing any flexibility
 - Exposes the entire **simple-peer** API
@@ -102,3 +100,5 @@ Optional listener allows you to filter connection requests on the server.
 Allow the request to continue. *Not calling this method will block the request.*  
 
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers.  
+
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
