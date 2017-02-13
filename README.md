@@ -4,8 +4,8 @@
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
 ## Features
-- streamlines WebRTC signalling without losing any flexibility
-- exposes the entire **simple-peer** API
+- Streamlines WebRTC signalling without losing any flexibility
+- Exposes the entire **simple-peer** API
 
 ## Install
 Server:
