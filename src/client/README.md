@@ -27,7 +27,7 @@ signalClient.on('ready', function() {
 
 // Fires on a request to connect
 signalClient.on('request', function (request) {
-  request.id // The id of the other peer
+  request.id // The id of the remote peer
   request.accept()
 })
 
@@ -66,4 +66,5 @@ Accept the request to connect.
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
 ###`signalClient.on('peer', function (peer) {})`  
-Fired when signalling is completed. Passes a signalled `SimplePeer` object.
+Fired when signalling is completed. Passes a signalled `SimplePeer` object.  
+The `id` of the remote peer is added as `peer.id`.
