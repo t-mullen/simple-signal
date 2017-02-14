@@ -71,7 +71,7 @@ Request to connect to another peer.
 Fired on receiving a request to connect from another peer. 
 
 ###`request.id`  
-The id of the other peer.  
+The id of the remote peer.  
 
 ###`request.accept([opts])`  
 Accept the request to connect.  
@@ -79,7 +79,9 @@ Accept the request to connect.
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
 ###`signalClient.on('peer', function (peer) {})`  
-Fired when signalling is completed. Passes a signalled `SimplePeer` object.
+Fired when signalling is completed. Passes a signalled `SimplePeer` object.  
+
+The `id` of the remote peer is added as `peer.id`.  
 
 ## Server API
 ###`signalServer = require('simple-signal-server')(io)`  
