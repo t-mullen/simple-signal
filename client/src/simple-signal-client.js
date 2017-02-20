@@ -115,3 +115,7 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
     })
   })
 }
+
+SimpleSignalClient.prototype.rediscover = function () {
+  socket.emit('simple-signal[discover]')
+}
