@@ -25,22 +25,17 @@ On the client:
 ```javascript
 var signalClient = new SimpleSignalClient(socket)
 
-// Wait until a connection to the server is established
 signalClient.on('ready', function() {
-  signalClient.id // You can now access your own peer id
+  signalClient.id // This client's unique identifier
   
-  // Initiate signalling to another peer
-  // otherID is the id of the peer you want to connect to
   signalClient.connect(otherID)
 })
 
-// Fires on a request to connect
 signalClient.on('request', function (request) {
-  request.id // The id of the other peer
+  request.id // The id of the other client
   request.accept()
 })
 
-// Fires when signalling is completed
 signalClient.on('peer', function (peer) {
   peer // A fully signalled SimplePeer object
   
