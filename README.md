@@ -12,8 +12,8 @@ npm install simple-signal-server
 ```
 
 Client (without Browserify):
-```
-<script src="simple-signal-client.js></script>
+```html
+<script src="simple-signal-client.js"></script>
 ```
 
 ## Usage
