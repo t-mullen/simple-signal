@@ -17,10 +17,9 @@ function SimpleSignalServer (io) {
     })
 
     socket.on('simple-signal[offer]', function (data) {
-      if (!self._sockets[data.target]) return
-
       if (!self._handlers['request']) {
         // Automatically forward if no handlers
+        if (!self._sockets[data.target]) return
         self._sockets[data.target].emit('simple-signal[offer]', {
           id: socket.id,
           trackingNumber: data.trackingNumber,
@@ -30,17 +29,19 @@ function SimpleSignalServer (io) {
 
       self._emit('request', {
         initiator: {
-          id: data.id
+          id: socket.id
         },
         receiver: {
           id: data.target
         },
-        forward: function (id) {
+        metadata: data.metadata || {},
+        forward: function (id, metadata) {
           id = id || data.target
           self._sockets[id].emit('simple-signal[offer]', {
             id: socket.id,
             trackingNumber: data.trackingNumber,
-            signal: data.signal
+            signal: data.signal,
+            metadata: metadata || data.metadata || {}
           })
         }
       })

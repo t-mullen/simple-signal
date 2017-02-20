@@ -60,12 +60,14 @@ Required `socket` is a **socket.io-client** instance.
 ###`signalClient.id`  
 The identifying string for this peer. Identical to `socket.id`.  
 
-###`signalClient.connect(id, [opts])`  
+###`signalClient.connect(id, [opts], [metadata])`  
 Request to connect to another peer.  
 
 `id` is the `signalClient.id` of the other peer.  
 
 `opts` are the options to be passed to the `SimplePeer` constructor.  
+
+Optional `metadata` is any serializable object to be passed along with the request.
 
 ###`signalClient.on('request', function (request) {})`  
 Fired on receiving a request to connect from another peer. 
@@ -98,9 +100,11 @@ Optional listener allows you to filter connection requests on the server.
 ###`request.receiver.id`  
 `id` of the peer that will receive the request.
 
-###`request.forward([id])`  
+###`request.forward([id], [metadata])`  
 Allow the request to continue. *Not calling this method will block the request.*  
 
-Optional `id` is the receiver of the request, allowing you to reroute requests to different peers.  
+Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
+
+Optional `metadata` is any serializable object to be passed along with the request.
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

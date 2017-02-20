@@ -7,6 +7,7 @@ function SimpleSignalClient (socket) {
 
   self._handlers = {}
   self._peers = {}
+  self._requests = {}
   self.id = null
   self.socket = socket
 
@@ -14,6 +15,10 @@ function SimpleSignalClient (socket) {
   socket.on('connect', function () {
     socket.emit('simple-signal[discover]')
   })
+  if (socket.connected) {
+    socket.emit('simple-signal[discover]')
+  }
+
   socket.on('simple-signal[discover]', function (id) {
     self.id = id
     self._emit('ready')
@@ -21,15 +26,23 @@ function SimpleSignalClient (socket) {
 
   // Respond to offers
   socket.on('simple-signal[offer]', function (data) {
+    if (self._requests[data.trackingNumber]) {
+      self._peers[data.trackingNumber].signal(data.signal)
+      return
+    } else {
+      self._requests[data.trackingNumber] = true
+    }
+
     self._emit('request', {
       id: data.id,
+      metadata: data.metadata,
       accept: function (opts) {
         opts = opts || {}
         opts.initiator = false
-        opts.trickle = false // TODO: Get trickle working
         var peer = new SimplePeer(opts)
 
         peer.id = data.id
+        self._peers[data.trackingNumber] = peer
         self._emit('peer', peer)
 
         peer.on('signal', function (signal) {
@@ -49,12 +62,14 @@ function SimpleSignalClient (socket) {
   socket.on('simple-signal[answer]', function (data) {
     var peer = self._peers[data.trackingNumber]
     if (peer) {
-      peer.id = data.id
-      self._emit('peer', peer)
+      if (peer.id) {
+        peer.id = data.id
+      } else {
+        peer.id = data.id
+        self._emit('peer', peer)
+      }
 
       peer.signal(data.signal)
-
-      delete self._peers[data.trackingNumber]
     }
   })
 }
@@ -81,12 +96,12 @@ SimpleSignalClient.prototype.on = function (event, handler) {
   self._handlers[event].push(handler)
 }
 
-SimpleSignalClient.prototype.connect = function (id, opts) {
+SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var self = this
   opts = opts || {}
+  metadata = metadata || {}
   opts.initiator = true
-  opts.trickle = false // TODO: Get trickle working
-  var trackingNumber = window.crypto.getRandomValues(new Uint32Array(3)).join('') // Random tracking number
+  var trackingNumber = Math.random().toString(36)
 
   var peer = new SimplePeer(opts)
   self._peers[trackingNumber] = peer
@@ -95,7 +110,8 @@ SimpleSignalClient.prototype.connect = function (id, opts) {
     self.socket.emit('simple-signal[offer]', {
       signal: signal,
       trackingNumber: trackingNumber,
-      target: id
+      target: id,
+      metadata: metadata
     })
   })
 }
