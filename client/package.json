@@ -10,7 +10,9 @@
   },
   "scripts": {
     "build": "browserify src/simple-signal-client.js -s SimpleSignalClient -r ./ | uglifyjs -m >  ../dist/simple-signal-client.min.js",
-    "test": "npm run test-standard && npm run test-setup && npm run test-node && npm run test-browser && npm run test-cleanup",
+    "test": "npm run test-all && npm run test-browser-local && npm run test-cleanup",
+    "test-travis": "npm run test-all && npm run test-browser && npm run test-cleanup",
+    "test-all": "npm run test-standard && npm run test-setup && npm run test-node && npm run test-browser",
     "test-standard": "standard \"src/*.js\" \"test/*.js\" \"../server/src/*.js\"",
     "test-setup": "npm install && cd ../server && npm install && node test/test-server.js& SERVER_PID=$! && cd ../client",
     "test-browser": "zuul -- test/*.js",
