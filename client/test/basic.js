@@ -40,7 +40,7 @@ test('connect two clients', function (t) {
   var socket = io(TEST_SERVER_URL)
   var socket2 = io(TEST_SERVER_URL)
 
-  var client1 = new SimpleSignalClient(socket)
+  var client1 = new SimpleSignalClient(socket, {})
   var client2
   var peer2
 
@@ -87,7 +87,7 @@ test('connection redirect by server', function (t) {
   var socket = io(TEST_SERVER_URL)
   var socket2 = io(TEST_SERVER_URL)
 
-  var client1 = new SimpleSignalClient(socket)
+  var client1 = new SimpleSignalClient(socket, {})
   var client2
   var peer2
 

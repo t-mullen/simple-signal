@@ -14,7 +14,7 @@ function SimpleSignalServer (io) {
     socket.on('simple-signal[discover]', function (metadata) {
       socket.emit('simple-signal[discover]', {
         id: socket.id,
-        metadata: (self._handlers['discover'] && self._handlers['discover'][0](socket.id, metadata)) || {}
+        metadata: (self._handlers['discover'] && self._handlers['discover'][0](socket.id, metadata)) || undefined
       })
       self.peers.push(socket.id)
     })
@@ -37,14 +37,15 @@ function SimpleSignalServer (io) {
         receiver: {
           id: data.target
         },
-        metadata: data.metadata || {},
-        forward: function (id, metadata) {
-          id = id || data.target
-          self._sockets[id].emit('simple-signal[offer]', {
+        metadata: data.metadata,
+        forward: function (target, metadata) {
+          if (typeof target === 'undefined') target = data.target
+          if (typeof metadata === 'undefined') metadata = data.metadata
+          self._sockets[target].emit('simple-signal[offer]', {
             id: socket.id,
             trackingNumber: data.trackingNumber,
             signal: data.signal,
-            metadata: metadata || data.metadata || {}
+            metadata: metadata
           })
         }
       })
@@ -56,7 +57,7 @@ function SimpleSignalServer (io) {
         id: socket.id,
         trackingNumber: data.trackingNumber,
         signal: data.signal,
-        metadata: data.metadata || {}
+        metadata: data.metadata
       })
     })
   })

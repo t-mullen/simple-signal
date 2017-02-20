@@ -37,7 +37,6 @@ function SimpleSignalClient (socket, metadata) {
       id: data.id,
       metadata: data.metadata,
       accept: function (opts, metadata) {
-        opts = opts || {}
         opts.initiator = false
         var peer = new SimplePeer(opts)
 
@@ -101,8 +100,7 @@ SimpleSignalClient.prototype.on = function (event, handler) {
 
 SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var self = this
-  opts = opts || {}
-  metadata = metadata || {}
+
   opts.initiator = true
   var trackingNumber = Math.random().toString(36)
 
