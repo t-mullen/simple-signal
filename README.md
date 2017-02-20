@@ -28,7 +28,9 @@ var signalClient = new SimpleSignalClient(socket)
 signalClient.on('ready', function() {
   signalClient.id // This client's unique identifier
   
-  signalClient.connect(otherID)
+  if (location.hash === '#1') {
+    signalClient.connect(otherID) // Initiate signalling
+  }
 })
 
 signalClient.on('request', function (request) {
