@@ -3,5 +3,11 @@ sudo: false
 node_js:
   - "4"
 before_script:
-  - cd client && npm run test-setup && cd ../
-script: cd client && npm run test-travis
+  - cd client && npm run test-setup
+script: 
+  - npm run test-standard
+  - npm run test-node
+  - npm run test-node-electron-webrtc
+  - npm run test-node-wrtc
+  - npm run test-browser
+  - npm run test-cleanup
