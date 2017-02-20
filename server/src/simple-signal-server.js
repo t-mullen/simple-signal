@@ -12,7 +12,6 @@ function SimpleSignalServer (io) {
     self._sockets[socket.id] = socket
 
     socket.on('simple-signal[discover]', function (data) {
-      console.log(self._handlers)
       socket.emit('simple-signal[discover]', {
         id: socket.id,
         metadata: (self._handlers['discover'] && self._handlers['discover'][0](socket.id)) || {}
