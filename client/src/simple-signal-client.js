@@ -19,9 +19,9 @@ function SimpleSignalClient (socket) {
     socket.emit('simple-signal[discover]')
   }
 
-  socket.on('simple-signal[discover]', function (id) {
-    self.id = id
-    self._emit('ready')
+  socket.on('simple-signal[discover]', function (data) {
+    self.id = data.id
+    self._emit('ready', data.metadata)
   })
 
   // Respond to offers

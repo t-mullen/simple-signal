@@ -69,6 +69,11 @@ Request to connect to another peer.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
+###`signalClient.on('peer', function (discoveryData) {})`  
+Fired when the client has connected to the server and done discovery.
+
+`discoveryData` is any additional data that has been passed by the server.
+
 ###`signalClient.on('request', function (request) {})`  
 Fired on receiving a request to connect from another peer. 
 
@@ -106,5 +111,12 @@ Allow the request to continue. *Not calling this method will block the request.*
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
 Optional `metadata` is any serializable object to be passed along with the request.
+
+###`signalServer.on('discover', function (id) {})`  
+Optional listener allows you to return additional discovery data when a new client connects.
+
+`id` is the `peer.id` of the client connecting.
+
+Any value returned from the callback will be passed to the `ready` event on the client.
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

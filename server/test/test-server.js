@@ -11,6 +11,10 @@ signal.on('request', function (request) {
   }
 })
 
+signal.on('discover', function (id) {
+  return "discovery metadata"
+})
+
 io.on('connection', function (socket) {
   socket.on('close', function () {
     socket.disconnect()

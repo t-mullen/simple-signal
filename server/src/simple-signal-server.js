@@ -12,7 +12,11 @@ function SimpleSignalServer (io) {
     self._sockets[socket.id] = socket
 
     socket.on('simple-signal[discover]', function (data) {
-      socket.emit('simple-signal[discover]', socket.id)
+      console.log(self._handlers)
+      socket.emit('simple-signal[discover]', {
+        id: socket.id,
+        metadata: (self._handlers['discover'] && self._handlers['discover'][0](socket.id)) || {}
+      })
       self.peers.push(socket.id)
     })
 

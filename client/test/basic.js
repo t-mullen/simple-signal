@@ -33,7 +33,7 @@ test('construct client', function (t) {
 })
 
 test('connect two clients', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   t.timeoutAfter(4000)
 
@@ -44,8 +44,10 @@ test('connect two clients', function (t) {
   var client2
   var peer2
 
-  client1.on('ready', function () {
+  client1.on('ready', function (metadata) {
     client2 = new SimpleSignalClient(socket2)
+
+    t.equal(metadata, 'discovery metadata', 'discovery metadata should be "discovery metadata"')
 
     client2.on('ready', function () {
       client2.connect(client1.id, {wrtc: wrtc}, {test: 'test metadata'})
