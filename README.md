@@ -52,10 +52,12 @@ signalClient.on('peer', function (peer) {
 ```
 
 ## Client API
-###`signalClient = new SignalClient(socket)`  
+###`signalClient = new SignalClient(socket, [metadata])`  
 Create a new signalling client.  
 
 Required `socket` is a **socket.io-client** instance.
+
+Optional `metadata` is any serializable data to be passed during discovery.
 
 ###`signalClient.id`  
 The identifying string for this peer. Identical to `socket.id`.  
@@ -94,13 +96,18 @@ The unique identifier of the remote peer is added as `peer.id`.
 
 Any metadata associated with the request/answer is added as `peer.metadata`.
 
+###`signalClient.rediscover(metdata)`  
+Initiate rediscovery.
+
+`metadata` is any discovery data returned from the server.  
+
 ## Server API
 ###`signalServer = require('simple-signal-server')(io)`  
 Create a new signalling server.  
 
 Required `io` is a **socket.io** instance.
 
-###`signalServer.on('discover', function (id) {})`  
+###`signalServer.on('discover', function (id, metadata) {})`  
 Optional listener allows you to return additional discovery data when a new client connects.
 
 `id` is the `peer.id` of the client connecting.

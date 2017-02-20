@@ -2,7 +2,7 @@ module.exports = SimpleSignalClient
 
 var SimplePeer = require('simple-peer')
 
-function SimpleSignalClient (socket) {
+function SimpleSignalClient (socket, metadata) {
   var self = this
 
   self._handlers = {}
@@ -13,10 +13,10 @@ function SimpleSignalClient (socket) {
 
   // Discover own socket.id
   socket.on('connect', function () {
-    socket.emit('simple-signal[discover]')
+    socket.emit('simple-signal[discover]', metadata)
   })
   if (socket.connected) {
-    socket.emit('simple-signal[discover]')
+    socket.emit('simple-signal[discover]', metadata)
   }
 
   socket.on('simple-signal[discover]', function (data) {
@@ -119,9 +119,9 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   })
 }
 
-SimpleSignalClient.prototype.rediscover = function () {
+SimpleSignalClient.prototype.rediscover = function (metadata) {
   var self = this
-  self.socket.emit('simple-signal[discover]')
+  self.socket.emit('simple-signal[discover]', metadata)
 }
 
 SimpleSignalClient.SimplePeer = SimplePeer
