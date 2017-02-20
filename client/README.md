@@ -12,8 +12,8 @@ npm install simple-signal-server
 ```
 
 Client (without Browserify):
-```
-<script src="simple-signal-client.js></script>
+```html
+<script src="simple-signal-client.js"></script>
 ```
 
 ## Usage
@@ -28,7 +28,9 @@ var signalClient = new SimpleSignalClient(socket)
 signalClient.on('ready', function() {
   signalClient.id // This client's unique identifier
   
-  signalClient.connect(otherPeersID)
+  if (location.hash === '#1') {
+    signalClient.connect(otherPeersID) // Initiate
+  }
 })
 
 signalClient.on('request', function (request) {
