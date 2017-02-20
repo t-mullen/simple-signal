@@ -3,11 +3,11 @@ sudo: false
 node_js:
   - "4"
 before_script:
-  - cd client && npm run test-setup
   - npm install -g standard
   - npm install -g tape
   - npm install -g zuul
   - npm install -g socket.io
+  - cd client && npm run test-setup
 script: 
   - npm run test-standard
   - npm run test-node
