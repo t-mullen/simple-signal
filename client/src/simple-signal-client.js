@@ -1,6 +1,7 @@
 module.exports = SimpleSignalClient
 
 var SimplePeer = require('simple-peer')
+var cuid = require('cuid')
 
 function SimpleSignalClient (socket, metadata) {
   var self = this
@@ -102,7 +103,7 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var self = this
 
   opts.initiator = true
-  var trackingNumber = Math.random().toString(36)
+  var trackingNumber = cuid()
 
   var peer = new SimplePeer(opts)
   self._peers[trackingNumber] = peer
