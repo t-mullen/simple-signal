@@ -21,7 +21,7 @@ if (process.env.WRTC === 'wrtc') {
 test('construct client', function (t) {
   t.plan(2)
 
-  t.timeoutAfter(4000)
+  t.timeoutAfter(10000)
 
   var socket = io(TEST_SERVER_URL)
 
@@ -35,7 +35,7 @@ test('construct client', function (t) {
 test('connect two clients', function (t) {
   t.plan(7)
 
-  t.timeoutAfter(4000)
+  t.timeoutAfter(10000)
 
   var socket = io(TEST_SERVER_URL)
   var socket2 = io(TEST_SERVER_URL)
@@ -82,7 +82,7 @@ test('connect two clients', function (t) {
 test('connection redirect by server', function (t) {
   t.plan(4)
 
-  t.timeoutAfter(4000)
+  t.timeoutAfter(10000)
 
   var socket = io(TEST_SERVER_URL)
   var socket2 = io(TEST_SERVER_URL)
