@@ -14,6 +14,8 @@ script:
   - npm run test-cleanup
 addons:
   sauce_connect:
-    username: "RationalCoding"
-  jwt:
-    secure: "<SAUCE_ACCESS_KEY>"
+    true
+env:
+  global:
+    SAUCE_USERNAME: RationalCoding
+    SAUCE_ACCESS_KEY: RsmWepog9NRmslE6pa1JQwyb2cNHJQUs5ysU7tv25to5JNe+xABdmFhzdckw4lzJTNIuBh8uaWDbxbgqI8dXwzjAdEFvnFuQ+rrtRMHSiTfDP8Oj0mXkx6+BkNBe8DH4m9qU5Rxlowcc+IKVcrwGfZb5KHexZQ4TMDAwgacc+JyW3O8CpG4oYviExR0jUp/cjd88bFeqe0oTjtgXNSsmvxlwX353ctX4fsX8T1iMSH02imI+4N5EvaMvygVXZSSj9bT5pPbJfjAlFGCKaq/EFzIelGreUoLe7HNu/8eJ7VHJm0XrbSjp1qbUYnECkxvJkJfAY27C0COWUqBQ6w5EpEJ1pUTs53thN7EFr+XkdmWD+L66IoocCR3eWI0Oo0dBsVeEQnv81haic20SnrgXr6d3jzZEHoSKc91glFDCFVvTa+3KqMBNv6UkgI45a66Gyk4Acl3Y6SFCPpqUAnHh7xnals+k5hXb+6JjG+y7L6/cW0R1T0P1Q+wsfUMZGAukrPyPX2UHX0ayk0Ty2DKTVuCO6eLMacSYr2hsZYTCyxHho/teMlmwhFhImEm2DLsWc5tCUQYIV6UV/q6PSNguNUKIHjBbSAk0G9HiqJ6NIh43awOOTx8RFM+PgL74mBzs3Ao64zlpcX2/swXMkOw7a6c2CTyCQJuQM/F25jHzqOg=
