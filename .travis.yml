@@ -8,5 +8,3 @@ before_script:
 script:
 - npm run test-standard
 - npm run test-node
-- npm run test-node-electron-webrtc
-- npm run test-node-wrtc
