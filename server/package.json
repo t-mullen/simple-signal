@@ -5,5 +5,8 @@
   "main": "src/simple-signal-server.js",
   "author": "Thomas Mullen",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "socket.io": "^1.7.3"
+  }
 }
