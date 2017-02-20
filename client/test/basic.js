@@ -1,18 +1,22 @@
 var test = require('tape')
-var common = require('./common')
 var io = require('socket.io-client')
 var SimpleSignalClient = require('./../src/simple-signal-client')
 
 var TEST_SERVER_URL = 'http://localhost:3000'
 
-var config
-test('get config', function (t) {
-  common.getConfig(function (err, _config) {
-    if (err) return t.fail(err)
-    config = _config
-    t.end()
+// For testing on node, we must provide a WebRTC implementation
+var wrtc
+if (process.env.WRTC === 'wrtc') {
+  wrtc = require('wrtc')
+} else if (process.env.WRTC === 'electron-webrtc') {
+  wrtc = require('electron-webrtc')()
+
+  wrtc.on('error', function (err, source) {
+    if (err.message !== 'Daemon already closed') {
+      console.error(err, source)
+    }
   })
-})
+}
 
 test('construct client', function (t) {
   t.plan(2)
@@ -46,13 +50,13 @@ test('connect two clients', function (t) {
     t.equal(metadata, 'discovery metadata', 'discovery metadata should be "discovery metadata"')
 
     client2.on('ready', function () {
-      client2.connect(client1.id, {config: config, wrtc: common.wrtc}, {test: 'test metadata'})
+      client2.connect(client1.id, {wrtc: wrtc}, {test: 'test metadata'})
     })
 
     client1.on('request', function (request) {
       t.equal(request.id, client2.id, 'id of request and client should be equal')
       t.equal('test metadata', request.metadata.test, 'metadata should be "test metadata"')
-      request.accept({config: config, wrtc: common.wrtc}, 'answer metadata')
+      request.accept({wrtc: wrtc}, 'answer metadata')
     })
 
     client2.on('peer', function (peer) {
@@ -91,12 +95,12 @@ test('connection redirect by server', function (t) {
     client2 = new SimpleSignalClient(socket2)
 
     client2.on('ready', function () {
-      client2.connect('some invalid id', {config: config, wrtc: common.wrtc}, {redirect: client1.id})
+      client2.connect('some invalid id', {wrtc: wrtc}, {redirect: client1.id})
     })
 
     client1.on('request', function (request) {
       t.equal(request.id, client2.id, 'id of request and client should be equal')
-      request.accept({config: config, wrtc: common.wrtc})
+      request.accept({wrtc: wrtc})
     })
 
     client2.on('peer', function (peer) {
