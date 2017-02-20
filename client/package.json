@@ -24,6 +24,7 @@
     "browserify": "^14.1.0",
     "electron-webrtc": "^0.3.0",
     "socket.io-client": "^1.7.3",
+    "standard": "^8.6.0",
     "tape": "^4.6.3",
     "uglify-js": "^2.7.5",
     "wrtc": "0.0.61",
