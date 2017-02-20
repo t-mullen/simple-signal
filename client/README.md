@@ -96,6 +96,13 @@ Create a new signalling server.
 
 Required `io` is a **socket.io** instance.
 
+###`signalServer.on('discover', function (id) {})`  
+Optional listener allows you to return additional discovery data when a new client connects.
+
+`id` is the `peer.id` of the client connecting.
+
+Any value returned from the callback will be passed to the `ready` event on the client.
+
 ###`signalServer.on('request', function (request) {})`  
 Optional listener allows you to filter connection requests on the server.  
 
@@ -111,12 +118,5 @@ Allow the request to continue. *Not calling this method will block the request.*
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
 Optional `metadata` is any serializable object to be passed along with the request.
-
-###`signalServer.on('discover', function (id) {})`  
-Optional listener allows you to return additional discovery data when a new client connects.
-
-`id` is the `peer.id` of the client connecting.
-
-Any value returned from the callback will be passed to the `ready` event on the client.
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

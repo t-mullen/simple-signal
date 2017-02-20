@@ -4,7 +4,6 @@
 ## Features
 - Streamlines WebRTC signalling without losing any flexibility
 - Exposes the entire **simple-peer** API
-- Makes it easy to manage multiple peer connections at once.
 
 ## Install
 Server:
@@ -26,19 +25,22 @@ On the client:
 ```javascript
 var signalClient = new SimpleSignalClient(socket)
 
+// Wait until a connection to the server is established
 signalClient.on('ready', function() {
-  signalClient.id // This client's unique identifier
+  signalClient.id // You can now access your own peer id
   
-  if (location.hash === '#1') {
-    signalClient.connect(otherID) // Initiate signalling
-  }
+  // Initiate signalling to another peer
+  // otherID is the id of the peer you want to connect to
+  signalClient.connect(otherID)
 })
 
+// Fires on a request to connect
 signalClient.on('request', function (request) {
-  request.id // The id of the other client
+  request.id // The id of the other peer
   request.accept()
 })
 
+// Fires when signalling is completed
 signalClient.on('peer', function (peer) {
   peer // A fully signalled SimplePeer object
   
@@ -94,6 +96,13 @@ Create a new signalling server.
 
 Required `io` is a **socket.io** instance.
 
+###`signalServer.on('discover', function (id) {})`  
+Optional listener allows you to return additional discovery data when a new client connects.
+
+`id` is the `peer.id` of the client connecting.
+
+Any value returned from the callback will be passed to the `ready` event on the client.
+
 ###`signalServer.on('request', function (request) {})`  
 Optional listener allows you to filter connection requests on the server.  
 
@@ -109,12 +118,5 @@ Allow the request to continue. *Not calling this method will block the request.*
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
 Optional `metadata` is any serializable object to be passed along with the request.
-
-###`signalServer.on('discover', function (id) {})`  
-Optional listener allows you to return additional discovery data when a new client connects.
-
-`id` is the `peer.id` of the client connecting.
-
-Any value returned from the callback will be passed to the `ready` event on the client.
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
