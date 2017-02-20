@@ -12,3 +12,8 @@ script:
   - npm run test-node-wrtc
   - npm run test-browser
   - npm run test-cleanup
+addons:
+  sauce_connect:
+    username: "RationalCoding"
+  jwt:
+    secure: "<SAUCE_ACCESS_KEY>"
