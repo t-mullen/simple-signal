@@ -1,7 +1,7 @@
 var io = require('socket.io')()
 var signal = new require('./../src/simple-signal-server.js')(io)
 
-var PORT = 9080
+var PORT = 3000
 
 signal.on('request', function (request) {
   if (request.metadata.redirect) {

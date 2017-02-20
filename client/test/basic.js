@@ -2,7 +2,7 @@ var test = require('tape')
 var io = require('socket.io-client')
 var SimpleSignalClient = require('./../src/simple-signal-client')
 
-var TEST_SERVER_URL = 'http://localhost:9080'
+var TEST_SERVER_URL = 'http://localhost:3000'
 
 // For testing on node, we must provide a WebRTC implementation
 var wrtc
