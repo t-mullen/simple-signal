@@ -33,7 +33,7 @@ test('construct client', function (t) {
 })
 
 test('connect two clients', function (t) {
-  t.plan(6)
+  t.plan(7)
 
   t.timeoutAfter(4000)
 
@@ -54,20 +54,18 @@ test('connect two clients', function (t) {
     })
 
     client1.on('request', function (request) {
-      console.log('1 got request')
       t.equal(request.id, client2.id, 'id of request and client should be equal')
       t.equal('test metadata', request.metadata.test, 'metadata should be "test metadata"')
-      request.accept({wrtc: wrtc})
+      request.accept({wrtc: wrtc}, 'answer metadata')
     })
 
     client2.on('peer', function (peer) {
       peer2 = peer
-      console.log('2 got peer')
+      t.equal(peer.metadata, 'answer metadata', 'answer metadata should be "answer metadata"')
       t.equal(client1.id, peer.id, 'id of peer and client should be equal')
     })
 
     client1.on('peer', function (peer) {
-      console.log('1 got peer')
       t.equal(client2.id, peer.id, 'id of peer and client should be equal')
 
       peer.on('connect', function () {

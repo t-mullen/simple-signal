@@ -55,7 +55,8 @@ function SimpleSignalServer (io) {
       self._sockets[data.target].emit('simple-signal[answer]', {
         id: socket.id,
         trackingNumber: data.trackingNumber,
-        signal: data.signal
+        signal: data.signal,
+        metadata: data.metadata || {}
       })
     })
   })

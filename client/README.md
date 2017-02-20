@@ -80,15 +80,19 @@ Fired on receiving a request to connect from another peer.
 ###`request.id`  
 The id of the remote peer.  
 
-###`request.accept([opts])`  
+###`request.accept([opts], [metadata])`  
 Accept the request to connect.  
 
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
+`metadata` is any serializable object to be passed along with the answer.
+
 ###`signalClient.on('peer', function (peer) {})`  
 Fired when signalling is completed. Passes a signalled `SimplePeer` object.  
 
-The `id` of the remote peer is added as `peer.id`.  
+The unique identifier of the remote peer is added as `peer.id`.  
+
+Any metadata associated with the request/answer is added as `peer.metadata`.
 
 ## Server API
 ###`signalServer = require('simple-signal-server')(io)`  

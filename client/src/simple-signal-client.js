@@ -36,12 +36,13 @@ function SimpleSignalClient (socket) {
     self._emit('request', {
       id: data.id,
       metadata: data.metadata,
-      accept: function (opts) {
+      accept: function (opts, metadata) {
         opts = opts || {}
         opts.initiator = false
         var peer = new SimplePeer(opts)
 
         peer.id = data.id
+        peer.metadata = data.metadata
         self._peers[data.trackingNumber] = peer
         self._emit('peer', peer)
 
@@ -49,7 +50,8 @@ function SimpleSignalClient (socket) {
           socket.emit('simple-signal[answer]', {
             signal: signal,
             trackingNumber: data.trackingNumber,
-            target: data.id
+            target: data.id,
+            metadata: metadata
           })
         })
 
@@ -66,6 +68,7 @@ function SimpleSignalClient (socket) {
         peer.id = data.id
       } else {
         peer.id = data.id
+        peer.metadata = data.metadata
         self._emit('peer', peer)
       }
 
@@ -117,7 +120,8 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
 }
 
 SimpleSignalClient.prototype.rediscover = function () {
-  socket.emit('simple-signal[discover]')
+  var self = this
+  self.socket.emit('simple-signal[discover]')
 }
 
 SimpleSignalClient.SimplePeer = SimplePeer
