@@ -5,6 +5,7 @@ node_js:
 before_script:
   - cd client && npm run test-setup
   - npm install -g standard
+  - npm install -g tape
 script: 
   - npm run test-standard
   - npm run test-node
