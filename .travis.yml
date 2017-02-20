@@ -3,6 +3,5 @@ sudo: false
 node_js:
   - "4"
 before_script:
-  - cd client && npm install && cd ../
-  - cd server && npm install && cd ../
+  - cd client && npm run test-setup
 script: cd client && npm run test-travis
