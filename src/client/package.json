@@ -7,5 +7,12 @@
   "license": "MIT",
   "dependencies": {
     "simple-peer": "^6.2.2"
+  },
+  "scripts": {
+    "build": "browserify simple-signal-client.js -s SimpleSignalClient -r ./ | uglifyjs -m >  ../../dist/simple-signal-client.min.js"
+  },
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "uglify-js": "^2.7.5"
   }
 }
