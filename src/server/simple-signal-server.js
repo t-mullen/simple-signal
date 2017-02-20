@@ -7,18 +7,18 @@ function SimpleSignalServer (io) {
   self._handlers = {}
   self._sockets = {}
   self.peers = []
-  
+
   io.on('connection', function (socket) {
     self._sockets[socket.id] = socket
-    
+
     socket.on('simple-signal[discover]', function (data) {
       socket.emit('simple-signal[discover]', socket.id)
       self.peers.push(socket.id)
     })
-    
+
     socket.on('simple-signal[offer]', function (data) {
       if (!self._sockets[data.target]) return
-      
+
       if (!self._handlers['request']) {
         // Automatically forward if no handlers
         self._sockets[data.target].emit('simple-signal[offer]', {
@@ -27,7 +27,7 @@ function SimpleSignalServer (io) {
           signal: data.signal
         })
       }
-      
+
       self._emit('request', {
         initiator: {
           id: data.id
@@ -45,7 +45,7 @@ function SimpleSignalServer (io) {
         }
       })
     })
-    
+
     socket.on('simple-signal[answer]', function (data) {
       // Answers are not intercepted by server
       self._sockets[data.target].emit('simple-signal[answer]', {
@@ -54,18 +54,18 @@ function SimpleSignalServer (io) {
         signal: data.signal
       })
     })
-    
   })
 }
 
 SimpleSignalServer.prototype._emit = function (event, data) {
-  var self = this,
-    fns = self._handlers[event] || [],
-    fn, i
-  
+  var self = this
+  var fns = self._handlers[event] || []
+  var fn
+  var i
+
   for (i = 0; i < fns.length; i++) {
     fn = fns[i]
-    if (fn && typeof(fn) === 'function') {
+    if (fn && typeof (fn) === 'function') {
       fn(data)
     }
   }
