@@ -4,6 +4,7 @@
 ## Features
 - Streamlines WebRTC signalling without losing any flexibility
 - Exposes the entire **simple-peer** API
+- Makes it easy to manage multiple peer connections at once.
 
 ## Install
 Server:
