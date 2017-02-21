@@ -54,6 +54,7 @@ signalClient.on('peer', function (peer) {
   })
 })
 ```
+With this demo, all peers will be connected in a long chain. You can easily make all kinds of networks!  
 
 ## Client API
 ###`signalClient = new SignalClient(socket, [discoveryData])`  
