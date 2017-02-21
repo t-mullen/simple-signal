@@ -17,7 +17,7 @@ Client (without Browserify):
 ```
 
 ## Usage
-Let's create a system where each peer connects to the peer that connected before it.  
+Let's connect each peer to the peer that connected previously.    
 The server uses an existing **socket.io** instance.
 ```javascript
 var signalServer = require('simple-signal-server')(io)  
