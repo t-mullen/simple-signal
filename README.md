@@ -141,4 +141,6 @@ Allow the request to continue. *Listening to "request" and not calling this meth
 
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
-Optional `metadata` is any serializable object to be passed along with the request.
+Optional `metadata` is any serializable object to be passed along with the request.  
+
+**All methods that use callbacks also support Promises**
