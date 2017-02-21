@@ -18,13 +18,13 @@ Client (without Browserify):
 
 ## Usage
 The server uses an existing **socket.io** instance.  
-Let's connect each peer to the peer that connected previously.    
+Let's connect each peer to the last peer that connected.      
 ```javascript
 var signalServer = require('simple-signal-server')(io)  
 
 var lastId = null
 signalServer.on('discover', function (id) {
-  if (lastId) return lastId
+  if (lastId) return lastId // Return the id of the last peer that connected
   lastId = id
 })
 ```
@@ -54,7 +54,7 @@ signalClient.on('peer', function (peer) {
   })
 })
 ```
-With this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
+In this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
 
 ## Client API
 ###`signalClient = new SignalClient(socket, [discoveryData])`  
