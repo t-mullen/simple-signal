@@ -1,5 +1,6 @@
 var io = require('socket.io')()
-var signal = new require('./../src/simple-signal-server.js')(io)
+var SimpleSignalServer = require('./../src/simple-signal-server.js')
+var signal = new SimpleSignalServer(io)
 
 var PORT = 3000
 
@@ -12,7 +13,7 @@ signal.on('request', function (request) {
 })
 
 signal.on('discover', function (id) {
-  return "discovery metadata"
+  return 'discovery metadata'
 })
 
 io.on('connection', function (socket) {
@@ -21,5 +22,5 @@ io.on('connection', function (socket) {
   })
 })
 
-console.log('test server running on port '+PORT)
+console.log('test server running on port ' + PORT)
 io.listen(PORT)

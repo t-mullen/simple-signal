@@ -93,10 +93,18 @@ SimpleSignalClient.prototype._emit = function (event, data) {
 
 SimpleSignalClient.prototype.on = function (event, handler) {
   var self = this
+
   if (!self._handlers[event]) {
     self._handlers[event] = []
   }
-  self._handlers[event].push(handler)
+
+  if (handler) {
+    self._handlers[event].push(handler)
+  } else {
+    return new Promise(function (resolve, reject) {
+      self._handlers[event].push(resolve)
+    })
+  }
 }
 
 SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
