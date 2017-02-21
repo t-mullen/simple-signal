@@ -25,7 +25,7 @@ var signalServer = require('simple-signal-server')(io)
 var lastId = null
 signalServer.on('discover', function (id) {
   if (lastId) return lastId
-  firstId = id
+  lastId = id
 })
 ```
 On the client:
