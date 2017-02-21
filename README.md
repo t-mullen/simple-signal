@@ -1,4 +1,4 @@
-# simple-signal [![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal)
+# simple-signal [![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal) [![Standard - JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
 ## Features
@@ -134,5 +134,3 @@ Allow the request to continue. *Not calling this method will block the request.*
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
 Optional `metadata` is any serializable object to be passed along with the request.
-
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
