@@ -17,19 +17,26 @@ Client (without Browserify):
 ```
 
 ## Usage
+Let's create a system where each peer connects to the peer that connected before it.  
 The server uses an existing **socket.io** instance.
 ```javascript
-var signalServer = require('simple-signal-server')(io)
+var signalServer = require('simple-signal-server')(io)  
+
+var lastId = null
+signalServer.on('discover', function (id) {
+  if (lastId) return lastId
+  firstId = id
+})
 ```
 On the client:
 ```javascript
 var signalClient = new SimpleSignalClient(socket)
 
-signalClient.on('ready', function() {
+signalClient.on('ready', function(lastId) {
   signalClient.id // This client's unique identifier
   
-  if (location.hash === '#1') {
-    signalClient.connect(otherPeersID) // Initiate
+  if (lastId) {
+    signalClient.connect(lastId) // Start signalling
   }
 })
 
