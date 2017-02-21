@@ -91,7 +91,7 @@ The id of the remote peer.
 Any additional metadata passed by the requesting peer or server.
 
 ###`request.accept([opts], [metadata])`  
-Accept the request to connect.  
+Accept the request to connect. *Not calling this method will block the request.*  
 
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
@@ -137,7 +137,7 @@ Optional listener allows you to filter connection requests on the server.
 Any additional metadata passed by the requesting peer.
 
 ###`request.forward([id], [metadata])`  
-Allow the request to continue. *Not calling this method will block the request.*  
+Allow the request to continue. *Listening to "request" and not calling this method will block the request.*  
 
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
