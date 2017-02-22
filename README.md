@@ -35,7 +35,7 @@ signalServer.on('discover', function (id) {
 ```
 On the client:
 ```javascript
-var signalClient = new SimpleSignalClient(socket)
+var signalClient = new SimpleSignalClient(socket) // Needs an existing socket.io-client instance
 
 signalClient.on('ready', function(lastId) {
   if (lastId) signalClient.connect(lastId) // Start connection
