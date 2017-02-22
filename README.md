@@ -143,4 +143,4 @@ Optional `id` is the receiver of the request, allowing you to reroute requests t
 
 Optional `metadata` is any serializable object to be passed along with the request.  
 
-**All methods that use callbacks also support Promises!**
+**All methods that use callbacks also support ES6 Promises!**
