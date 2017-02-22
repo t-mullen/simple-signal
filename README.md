@@ -24,8 +24,13 @@ var signalServer = require('simple-signal-server')(io)
 
 var lastId = null
 signalServer.on('discover', function (id) {
-  if (lastId) return lastId // Return the id of the last peer that connected
-  lastId = id
+  if (lastId) {
+    lastId = id
+    return lastId // Return the id of the last peer that connected
+  } else {
+    lastId = id
+    return null
+  }
 })
 ```
 On the client:
@@ -33,16 +38,11 @@ On the client:
 var signalClient = new SimpleSignalClient(socket)
 
 signalClient.on('ready', function(lastId) {
-  signalClient.id // This client's unique identifier
-  
-  if (lastId) {
-    signalClient.connect(lastId) // Start signalling
-  }
+  if (lastId) signalClient.connect(lastId) // Start connection
 })
 
 signalClient.on('request', function (request) {
-  request.id // The id of the other peer
-  request.accept()
+  request.accept() // Accept a request to connect
 })
 
 signalClient.on('peer', function (peer) {
