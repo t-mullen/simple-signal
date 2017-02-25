@@ -1,9 +1,10 @@
-# simple-signal
+# simple-signal [![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal) [![Standard - JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
 ## Features
 - Streamlines WebRTC signalling without losing any flexibility
 - Exposes the entire **simple-peer** API
+- Useful for managing multiple connections
 
 ## Install
 Server:
@@ -17,25 +18,27 @@ Client (without Browserify):
 ```
 
 ## Usage
-The server uses an existing **socket.io** instance.
+The server uses an existing **socket.io** instance.  
+Let's connect each peer to the last peer that connected.      
 ```javascript
-var signalServer = require('simple-signal-server')(io)
+var signalServer = require('simple-signal-server')(io)  
+
+var lastId = null
+signalServer.on('discover', function (request) {
+  request.discover(lastId)
+  lastId = request.initiator.id
+})
 ```
 On the client:
 ```javascript
-var signalClient = new SimpleSignalClient(socket)
+var signalClient = new SimpleSignalClient(socket) // Needs an existing socket.io-client instance
 
-signalClient.on('ready', function() {
-  signalClient.id // This client's unique identifier
-  
-  if (location.hash === '#1') {
-    signalClient.connect(otherPeersID) // Initiate
-  }
+signalClient.on('ready', function(lastId) {
+  if (lastId) signalClient.connect(lastId) // Start connection
 })
 
 signalClient.on('request', function (request) {
-  request.id // The id of the other peer
-  request.accept()
+  request.accept() // Accept a request to connect
 })
 
 signalClient.on('peer', function (peer) {
@@ -47,6 +50,7 @@ signalClient.on('peer', function (peer) {
   })
 })
 ```
+In this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
 
 ## Client API
 ###`signalClient = new SignalClient(socket, [discoveryData])`  
@@ -76,14 +80,14 @@ Fired when the client has connected to the server and done discovery.
 ###`signalClient.on('request', function (request) {})`  
 Fired on receiving a request to connect from another peer. 
 
-###`request.id`  
+####`request.id`  
 The id of the remote peer.  
 
-###`request.metadata`
+####`request.metadata`
 Any additional metadata passed by the requesting peer or server.
 
-###`request.accept([opts], [metadata])`  
-Accept the request to connect.  
+####`request.accept([opts], [metadata])`  
+Accept the request to connect. *Not calling this method will block the request.*  
 
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
@@ -107,32 +111,37 @@ Create a new signalling server.
 
 Required `io` is a **socket.io** instance.
 
-###`signalServer.on('discover', function (id, discoveryData) {})`  
+###`signalServer.on('discover', function (request) {})`  
 Optional listener allows you to return additional discovery data when a new client connects or rediscovers.
 
-`id` is the `peer.id` of the client connecting.
+####`request.initiator.id`  
+`id` of the peer initiating discovery.
 
-`discoveryData` is any data passed into the `SimpleSignalClient` constructor.
+####`request.metadata`
+Any additional metadata passed by the discovering peer.
 
-Any value returned from the callback will be passed to the `ready` event on the client.
+####`request.discover([metadata])`  
+Allow discovery to continue. *Listening to "request" and not calling this method will block discovery.*  
+
+Optional `metadata` is any serializable object to be passed along with the request.  
 
 ###`signalServer.on('request', function (request) {})`  
 Optional listener allows you to filter connection requests on the server.  
 
-###`request.initiator.id`  
+####`request.initiator.id`  
 `id` of the peer initiating the request.
 
-###`request.receiver.id`  
+####`request.receiver.id`  
 `id` of the peer that will receive the request.
 
-###`request.metadata`
+####`request.metadata`
 Any additional metadata passed by the requesting peer.
 
-###`request.forward([id], [metadata])`  
-Allow the request to continue. *Not calling this method will block the request.*  
+####`request.forward([id], [metadata])`  
+Allow the request to continue. *Listening to "request" and not calling this method will block the request.*  
 
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
-Optional `metadata` is any serializable object to be passed along with the request.
+Optional `metadata` is any serializable object to be passed along with the request.  
 
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+**All methods that use callbacks also support ES6 Promises!**
