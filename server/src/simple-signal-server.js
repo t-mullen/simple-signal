@@ -18,9 +18,18 @@ function SimpleSignalServer (io) {
         })
       }
 
-      socket.emit('simple-signal[discover]', {
+      self._emit('discover', {
+        initiator: { // Duplicate to match request.initiator.id
+          id: socket.id
+        },
         id: socket.id,
-        metadata: self._handlers['discover'][0](socket.id, metadata)
+        metadata: metadata,
+        discover: function (metadata) {
+          socket.emit('simple-signal[discover]', {
+            id: socket.id,
+            metadata: metadata
+          })
+        }
       })
       self.peers.push(socket.id)
     })

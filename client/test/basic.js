@@ -128,7 +128,7 @@ test('connection redirect by server', function (t) {
 
 test('SUMMARY', function (t) {
   t.end()
-  if (process) {
+  if (process && process.exit) {
     process.exit(0)
   }
 })

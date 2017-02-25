@@ -12,8 +12,8 @@ signal.on('request', function (request) {
   }
 })
 
-signal.on('discover', function (id) {
-  return 'discovery metadata'
+signal.on('discover', function (request) {
+  request.discover('discovery metadata')
 })
 
 io.on('connection', function (socket) {
