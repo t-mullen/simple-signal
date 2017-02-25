@@ -121,7 +121,7 @@ Optional listener allows you to return additional discovery data when a new clie
 Any additional metadata passed by the discovering peer.
 
 ####`request.discover([metadata])`  
-Allow discovery to continue. *Listening to "request" and not calling this method will block discovery.*  
+Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*  
 
 Optional `metadata` is any serializable object to be passed along with the request.  
 
