@@ -72,7 +72,7 @@ Request to connect to another peer.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
-###`signalClient.on('peer', function (discoveryData) {})`  
+###`signalClient.on('ready', function (discoveryData) {})`  
 Fired when the client has connected to the server and done discovery.
 
 `discoveryData` is any additional data that has been passed by the server.
