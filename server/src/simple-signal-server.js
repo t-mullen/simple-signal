@@ -16,6 +16,7 @@ function SimpleSignalServer (io) {
         socket.emit('simple-signal[discover]', {
           id: socket.id
         })
+        return
       }
 
       self._emit('discover', {
@@ -37,14 +38,13 @@ function SimpleSignalServer (io) {
     socket.on('simple-signal[offer]', function (data) {
       if (!self._handlers['request']) {
         // Automatically forward if no handlers
-        if (!self._sockets[data.target]) {
-          self._sockets[data.target].emit('simple-signal[offer]', {
-            id: socket.id,
-            trackingNumber: data.trackingNumber,
-            signal: data.signal
-          })
-          return
-        }
+        if (!self._sockets[data.target]) return
+        self._sockets[data.target].emit('simple-signal[offer]', {
+          id: socket.id,
+          trackingNumber: data.trackingNumber,
+          signal: data.signal
+        })
+        return
       }
 
       self._emit('request', {
@@ -58,6 +58,7 @@ function SimpleSignalServer (io) {
         forward: function (target, metadata) {
           if (typeof target === 'undefined') target = data.target
           if (typeof metadata === 'undefined') metadata = data.metadata
+          if (!self._sockets[target]) return
           self._sockets[target].emit('simple-signal[offer]', {
             id: socket.id,
             trackingNumber: data.trackingNumber,
@@ -70,6 +71,7 @@ function SimpleSignalServer (io) {
 
     socket.on('simple-signal[answer]', function (data) {
       // Answers are always forwarded
+      if (!self._sockets[data.target]) return
       self._sockets[data.target].emit('simple-signal[answer]', {
         id: socket.id,
         trackingNumber: data.trackingNumber,

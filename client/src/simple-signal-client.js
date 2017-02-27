@@ -28,10 +28,14 @@ function SimpleSignalClient (socket, metadata) {
   // Respond to offers
   socket.on('simple-signal[offer]', function (data) {
     if (self._requests[data.trackingNumber]) {
-      self._peers[data.trackingNumber].signal(data.signal)
+      if (self._peers[data.trackingNumber]) {
+        self._peers[data.trackingNumber].signal(data.signal)
+      } else {
+        self._requests[data.trackingNumber].push(data.signal)
+      }
       return
     } else {
-      self._requests[data.trackingNumber] = true
+      self._requests[data.trackingNumber] = [data.signal]
     }
 
     self._emit('request', {
@@ -55,7 +59,10 @@ function SimpleSignalClient (socket, metadata) {
           })
         })
 
-        peer.signal(data.signal)
+        while (self._requests[data.trackingNumber][0]) {
+          peer.signal(self._requests[data.trackingNumber].shift())
+        }
+        
       }
     })
   })
