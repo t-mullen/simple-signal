@@ -62,7 +62,6 @@ function SimpleSignalClient (socket, metadata) {
         while (self._requests[data.trackingNumber][0]) {
           peer.signal(self._requests[data.trackingNumber].shift())
         }
-        
       }
     })
   })
