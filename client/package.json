@@ -15,7 +15,7 @@
     "test": "npm run test-setup && npm run test-server && npm run test-standard && npm run test-node && npm run test-browser-local && npm run test-cleanup",
     "test-setup": "npm install && cd ../server && npm install && cd ../client",
     "test-server": "cd ../server && node test/test-server.js& SERVER_PID=$! && cd ../client",
-    "test-standard": "standard \"src/*.js\" \"test/*.js\" \"../server/src/*.js\"",
+    "test-standard": "standard --fix \"src/*.js\" \"test/*.js\" \"../server/src/*.js\"",
     "test-browser": "zuul -- test/*.js",
     "test-browser-local": "zuul --local -- test/*.js",
     "test-node": "npm run test-node-electron-webrtc && npm run test-node-wrtc",
