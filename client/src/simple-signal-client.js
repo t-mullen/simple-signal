@@ -6,6 +6,8 @@ var cuid = require('cuid')
 function SimpleSignalClient (socket, metadata) {
   var self = this
 
+  metadata = metadata || {}
+  
   self._handlers = {}
   self._peers = {}
   self._requests = {}
@@ -115,6 +117,9 @@ SimpleSignalClient.prototype.on = function (event, handler) {
 
 SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var self = this
+  
+  opts = opts || {}
+  metadata = metadata || {}
 
   opts.initiator = true
   var trackingNumber = cuid()
@@ -134,6 +139,7 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
 
 SimpleSignalClient.prototype.rediscover = function (metadata) {
   var self = this
+  metadata = metadata || {}
   self.socket.emit('simple-signal[discover]', metadata)
 }
 
