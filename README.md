@@ -106,7 +106,7 @@ Initiate rediscovery.
 `metadata` is any discovery data returned from the server.  
 
 ## Server API
-###`signalServer = require('simple-signal-server')(io)`  
+### `signalServer = require('simple-signal-server')(io)`  
 Create a new signalling server.  
 
 Required `io` is a **socket.io** instance.
