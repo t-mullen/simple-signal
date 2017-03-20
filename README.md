@@ -53,17 +53,17 @@ signalClient.on('peer', function (peer) {
 In this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
 
 ## Client API
-###`signalClient = new SignalClient(socket, [discoveryData])`  
+### `signalClient = new SignalClient(socket, [discoveryData])`  
 Create a new signalling client.  
 
 Required `socket` is a **socket.io-client** instance.
 
 Optional `discoveryData` is any serializable data to be passed during discovery.
 
-###`signalClient.id`  
+### `signalClient.id`  
 The identifying string for this peer. Identical to `socket.id`.  
 
-###`signalClient.connect(id, [opts], [metadata])`  
+### `signalClient.connect(id, [opts], [metadata])`  
 Request to connect to another peer.  
 
 `id` is the `signalClient.id` of the other peer.  
@@ -72,35 +72,35 @@ Request to connect to another peer.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
-###`signalClient.on('ready', function (discoveryData) {})`  
+### `signalClient.on('ready', function (discoveryData) {})`  
 Fired when the client has connected to the server and done discovery.
 
 `discoveryData` is any additional data that has been passed by the server.
 
-###`signalClient.on('request', function (request) {})`  
+### `signalClient.on('request', function (request) {})`  
 Fired on receiving a request to connect from another peer. 
 
-####`request.id`  
+#### `request.id`  
 The id of the remote peer.  
 
-####`request.metadata`
+#### `request.metadata`
 Any additional metadata passed by the requesting peer or server.
 
-####`request.accept([opts], [metadata])`  
+#### `request.accept([opts], [metadata])`  
 Accept the request to connect. *Not calling this method will block the request.*  
 
 `opts` are the options to be passed to the `SimplePeer` constructor.  
 
 `metadata` is any serializable object to be passed along with the answer.
 
-###`signalClient.on('peer', function (peer) {})`  
+### `signalClient.on('peer', function (peer) {})`  
 Fired when signalling is completed. Passes a signalled `SimplePeer` object.  
 
 The unique identifier of the remote peer is available as `peer.id`.  
 
 Any metadata associated with the request/answer is available as `peer.metadata`.
 
-###`signalClient.rediscover(metdata)`  
+### `signalClient.rediscover(metdata)`  
 Initiate rediscovery.
 
 `metadata` is any discovery data returned from the server.  
@@ -111,33 +111,33 @@ Create a new signalling server.
 
 Required `io` is a **socket.io** instance.
 
-###`signalServer.on('discover', function (request) {})`  
+### `signalServer.on('discover', function (request) {})`  
 Optional listener allows you to return additional discovery data when a new client connects or rediscovers.
 
-####`request.initiator.id`  
+#### `request.initiator.id`  
 `id` of the peer initiating discovery.
 
-####`request.metadata`
+#### `request.metadata`
 Any additional metadata passed by the discovering peer.
 
-####`request.discover([metadata])`  
+#### `request.discover([metadata])`  
 Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*  
 
 Optional `metadata` is any serializable object to be passed along with the request.  
 
-###`signalServer.on('request', function (request) {})`  
+### `signalServer.on('request', function (request) {})`  
 Optional listener allows you to filter connection requests on the server.  
 
-####`request.initiator.id`  
+#### `request.initiator.id`  
 `id` of the peer initiating the request.
 
-####`request.receiver.id`  
+#### `request.receiver.id`  
 `id` of the peer that will receive the request.
 
-####`request.metadata`
+#### `request.metadata`
 Any additional metadata passed by the requesting peer.
 
-####`request.forward([id], [metadata])`  
+#### `request.forward([id], [metadata])`  
 Allow the request to continue. *Listening to "request" and not calling this method will block the request.*  
 
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
