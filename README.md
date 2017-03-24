@@ -12,9 +12,9 @@ Server:
 npm install simple-signal-server
 ```
 
-Client (without Browserify):
-```html
-<script src="simple-signal-client.js"></script>
+Client (with Browserify):  
+```
+npm install simple-signal-client
 ```
 
 ## Usage
