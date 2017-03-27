@@ -2,6 +2,7 @@ module.exports = SimpleSignalClient
 
 var SimplePeer = require('simple-peer')
 var cuid = require('cuid')
+require('babel-polyfill')
 
 function SimpleSignalClient (socket, metadata) {
   var self = this
