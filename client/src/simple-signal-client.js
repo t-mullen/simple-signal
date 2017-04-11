@@ -51,7 +51,7 @@ function SimpleSignalClient (socket, metadata) {
         var peer = new SimplePeer(opts)
 
         peer.id = data.id
-        peer.metadata = data.metadata
+        peer.metadata = data.metadata || {}
         self._peers[data.trackingNumber] = peer
         self._emit('peer', peer)
 
