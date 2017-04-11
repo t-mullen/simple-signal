@@ -8,7 +8,7 @@ function SimpleSignalClient (socket, metadata) {
   var self = this
 
   metadata = metadata || {}
-  
+
   self._handlers = {}
   self._peers = {}
   self._requests = {}
@@ -43,8 +43,10 @@ function SimpleSignalClient (socket, metadata) {
 
     self._emit('request', {
       id: data.id,
-      metadata: data.metadata,
+      metadata: data.metadata || {},
       accept: function (opts, metadata) {
+        opts = opts || {}
+        metadata = metadata || {}
         opts.initiator = false
         var peer = new SimplePeer(opts)
 
@@ -118,7 +120,7 @@ SimpleSignalClient.prototype.on = function (event, handler) {
 
 SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var self = this
-  
+
   opts = opts || {}
   metadata = metadata || {}
 
