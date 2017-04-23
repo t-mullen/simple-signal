@@ -65,11 +65,6 @@ signalClient.on('peer', function (peer) {
 
 In this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
 
-## Who's using it?
-
-- [multihack](http://multihack.co) - Real-time collaboration editor.
-- *Your app here! Send a PR*
-
 ## Client API
 
 ### `signalClient = new SignalClient(socket, [discoveryData])`  
