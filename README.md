@@ -65,6 +65,30 @@ signalClient.on('peer', function (peer) {
 
 In this example, all peers will be connected in a long chain. You can easily create all kinds of networks!  
 
+### A simpler example
+
+A common signaling scheme is to connect just two peers by having one peer "call" the ID of another.
+
+Server:
+```javascript
+var signalServer = require('simple-signal-server')(io) // This is all the server code needed!
+```
+
+Client:
+```javascript
+var signalClient = new SimpleSignalClient(socket) // Needs an existing socket.io-client instance
+
+signalClient.on('ready', function() {
+  promptUserForID(function (id) { // get the target peers ID somehow
+    signalClient.connect(id) // connect to target peer
+  })
+})
+
+signalClient.on('request', function (request) {
+  request.accept() // Accept a request to connect
+})
+```
+
 ## Client API
 
 ### `signalClient = new SignalClient(socket, [discoveryData])`  
