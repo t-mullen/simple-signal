@@ -188,6 +188,7 @@ Optional listener allows you to filter connection requests on the server.
 `id` of the peer initiating the request.
 
 #### `request.receiver.id`  
+
 `id` of the peer that will receive the request.
 
 #### `request.metadata`
@@ -201,5 +202,13 @@ Allow the request to continue. *Listening to "request" and not calling this meth
 Optional `id` is the receiver of the request, allowing you to reroute requests to different peers. 
 
 Optional `metadata` is any serializable object to be passed along with the request.  
+
+### `signalServer.on('disconnect', function (id) {})`  
+
+Event fires when a socket.io-client disconnects from the server.
+
+#### `id`
+
+`id` of the socket that disconnected.
 
 **All methods that use callbacks also support ES6 Promises!**
