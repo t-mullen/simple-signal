@@ -203,6 +203,14 @@ Optional `id` is the receiver of the request, allowing you to reroute requests t
 
 Optional `metadata` is any serializable object to be passed along with the request.  
 
+### `signalServer.on('connect', function (id) {})`  
+
+Event fires when a socket.io-client connects to the server.
+
+#### `id`
+
+`id` of the socket that connected.
+
 ### `signalServer.on('disconnect', function (id) {})`  
 
 Event fires when a socket.io-client disconnects from the server.
