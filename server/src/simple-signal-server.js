@@ -10,10 +10,10 @@ function SimpleSignalServer (io) {
 
   io.on('connection', function (socket) {
     self._sockets[socket.id] = socket
-    
+
     socket.on('disconnect', function () {
       delete self._sockets[socket.id]
-      self.emit('disconnect', socket.id)
+      self._emit('disconnect', socket.id)
     })
 
     socket.on('simple-signal[discover]', function (metadata) {
