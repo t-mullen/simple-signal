@@ -85,6 +85,8 @@ function SimpleSignalServer (io) {
         metadata: data.metadata || {}
       })
     })
+    
+    self._emit('connect', socket.id)
   })
 }
 
