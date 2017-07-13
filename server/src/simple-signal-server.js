@@ -13,7 +13,7 @@ function SimpleSignalServer (io) {
 
     socket.on('disconnect', function () {
       delete self._sockets[socket.id]
-      self._emit('disconnect', socket.id)
+      self._emit('disconnect', socket)
     })
 
     socket.on('simple-signal[discover]', function (metadata) {
@@ -86,7 +86,7 @@ function SimpleSignalServer (io) {
       })
     })
     
-    self._emit('connect', socket.id)
+    self._emit('connect', socket)
   })
 }
 
