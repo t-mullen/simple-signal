@@ -1,6 +1,7 @@
 # simple-signal 
 
-[![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal) [![Standard - JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/) [![npm](https://img.shields.io/npm/dt/simple-signal-client.svg)](https://www.npmjs.org/package/simple-signal-client)
+[![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
