@@ -2,14 +2,19 @@ module.exports = SimpleSignalClient
 
 var SimplePeer = require('simple-peer')
 var cuid = require('cuid')
-require('babel-polyfill')
+var inherits = require('inherits')
+var EventEmitter = require('nanobus')
+
+inherits(SimpleSignalClient, EventEmitter)
 
 function SimpleSignalClient (socket, metadata) {
   var self = this
+  if (!(self instanceof SimpleSignalClient)) return new SimpleSignalClient(socket, metadata)
+
+  EventEmitter.call(this)
 
   metadata = metadata || {}
 
-  self._handlers = {}
   self._peers = {}
   self._requests = {}
   self.id = null
@@ -23,99 +28,78 @@ function SimpleSignalClient (socket, metadata) {
     socket.emit('simple-signal[discover]', metadata)
   }
 
-  socket.on('simple-signal[discover]', function (data) {
-    self.id = data.id
-    self._emit('ready', data.metadata)
-  })
+  self.socket.on('simple-signal[discover]', self._onDiscover.bind(self))
+  self.socket.on('simple-signal[offer]', self._onOffer.bind(self))
+  self.socket.on('simple-signal[answer]', self._onAnswer.bind(self))
+}
 
-  // Respond to offers
-  socket.on('simple-signal[offer]', function (data) {
-    if (self._requests[data.trackingNumber]) {
-      if (self._peers[data.trackingNumber]) {
-        self._peers[data.trackingNumber].signal(data.signal)
-      } else {
-        self._requests[data.trackingNumber].push(data.signal)
-      }
-      return
+SimpleSignalClient.prototype._onDiscover = function (data) {
+  var self = this
+
+  self.id = data.id
+  self.emit('ready', data.metadata)
+}
+
+SimpleSignalClient.prototype._onOffer = function (data) {
+  var self = this
+
+  if (self._requests[data.trackingNumber]) {
+    if (self._peers[data.trackingNumber]) {
+      self._peers[data.trackingNumber].signal(data.signal)
     } else {
-      self._requests[data.trackingNumber] = [data.signal]
+      self._requests[data.trackingNumber].push(data.signal)
     }
+    return
+  }
 
-    self._emit('request', {
-      id: data.id,
-      metadata: data.metadata || {},
-      accept: function (opts, metadata) {
-        opts = opts || {}
-        metadata = metadata || {}
-        opts.initiator = false
-        var peer = new SimplePeer(opts)
+  self._requests[data.trackingNumber] = [data.signal]
 
-        peer.id = data.id
-        peer.metadata = data.metadata || {}
-        self._peers[data.trackingNumber] = peer
-        self._emit('peer', peer)
+  self.emit('request', {
+    id: data.id,
+    metadata: data.metadata || {},
+    accept: function (opts, metadata) {
+      opts = opts || {}
+      metadata = metadata || {}
+      opts.initiator = false
+      var peer = new SimplePeer(opts)
 
-        peer.on('signal', function (signal) {
-          socket.emit('simple-signal[answer]', {
-            signal: signal,
-            trackingNumber: data.trackingNumber,
-            target: data.id,
-            metadata: metadata
-          })
+      peer.id = data.id
+      peer.metadata = data.metadata || {}
+      self._peers[data.trackingNumber] = peer
+      self.emit('peer', peer)
+
+      peer.on('signal', function (signal) {
+        self.socket.emit('simple-signal[answer]', {
+          signal: signal,
+          trackingNumber: data.trackingNumber,
+          target: data.id,
+          metadata: metadata
         })
+      })
 
-        while (self._requests[data.trackingNumber][0]) {
-          peer.signal(self._requests[data.trackingNumber].shift())
-        }
-      }
-    })
-  })
-
-  // Respond to answers
-  socket.on('simple-signal[answer]', function (data) {
-    var peer = self._peers[data.trackingNumber]
-    if (peer) {
-      if (peer.id) {
-        peer.id = data.id
-      } else {
-        peer.id = data.id
-        peer.metadata = data.metadata
-        self._emit('peer', peer)
-      }
-
-      peer.signal(data.signal)
+      self._requests[data.trackingNumber].forEach(function (request) {
+        peer.signal(request)
+      })
+      self._requests[data.trackingNumber] = []
     }
   })
 }
 
-SimpleSignalClient.prototype._emit = function (event, data) {
-  var self = this
-  var fns = self._handlers[event] || []
-  var fn
-  var i
-
-  for (i = 0; i < fns.length; i++) {
-    fn = fns[i]
-    if (fn && typeof (fn) === 'function') {
-      fn(data)
-    }
-  }
-}
-
-SimpleSignalClient.prototype.on = function (event, handler) {
+SimpleSignalClient.prototype._onAnswer = function (data) {
   var self = this
 
-  if (!self._handlers[event]) {
-    self._handlers[event] = []
-  }
+  var peer = self._peers[data.trackingNumber]
+  if (!peer) return
 
-  if (handler) {
-    self._handlers[event].push(handler)
+  if (peer.id) {
+    peer.id = data.id
   } else {
-    return new Promise(function (resolve, reject) {
-      self._handlers[event].push(resolve)
-    })
+    peer.id = data.id
+    peer.metadata = data.metadata
+    self.emit('peer', peer)
   }
+
+  peer.signal(data.signal)
 }
 
 SimpleSignalClient.prototype.connect = function (id, opts, metadata) {

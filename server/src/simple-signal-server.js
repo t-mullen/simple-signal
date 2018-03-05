@@ -1,121 +1,113 @@
-module.exports = function (io) {
-  return new SimpleSignalServer(io)
-}
+module.exports = SimpleSignalServer
+
+var inherits = require('inherits')
+var EventEmitter = require('nanobus')
+
+inherits(SimpleSignalServer, EventEmitter)
 
 function SimpleSignalServer (io) {
   var self = this
-  self._handlers = {}
+  if (!(self instanceof SimpleSignalServer)) return new SimpleSignalServer(io)
+
+  EventEmitter.call(self)
+
   self._sockets = {}
   self.peers = []
 
-  io.on('connection', function (socket) {
-    self._sockets[socket.id] = socket
+  io.on('connection', self._onConnect.bind(self))
+}
 
-    socket.on('disconnect', function () {
-      delete self._sockets[socket.id]
-      self._emit('disconnect', socket)
+SimpleSignalServer.prototype._onConnect = function (socket) {
+  var self = this
+  self._sockets[socket.id] = socket
+
+  socket.on('disconnect', self._onDisconnect.bind(self, socket))
+  socket.on('simple-signal[discover]', self._onDiscover.bind(self, socket))
+  socket.on('simple-signal[offer]', self._onOffer.bind(self, socket))
+  socket.on('simple-signal[answer]', self._onAnswer.bind(self, socket))
+
+  self.emit('connect', socket)
+}
+
+SimpleSignalServer.prototype._onDisconnect = function (socket) {
+  var self = this
+
+  delete self._sockets[socket.id]
+  self.emit('disconnect', socket)
+}
+
+SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
+  var self = this
+
+  if (self.listeners('discover').length === 0) {
+    socket.emit('simple-signal[discover]', {
+      id: socket.id
     })
+    return
+  }
 
-    socket.on('simple-signal[discover]', function (metadata) {
-      if (!self._handlers['discover']) {
-        socket.emit('simple-signal[discover]', {
-          id: socket.id
-        })
-        return
-      }
-
-      self._emit('discover', {
-        initiator: { // Duplicate to match request.initiator.id
-          id: socket.id
-        },
+  self.emit('discover', {
+    initiator: { // Duplicate to match request.initiator.id
+      id: socket.id
+    },
+    id: socket.id,
+    metadata: metadata,
+    discover: function (metadata) {
+      socket.emit('simple-signal[discover]', {
         id: socket.id,
-        metadata: metadata,
-        discover: function (metadata) {
-          socket.emit('simple-signal[discover]', {
-            id: socket.id,
-            metadata: metadata
-          })
-        }
+        metadata: metadata
       })
-      self.peers.push(socket.id)
+    }
+  })
+  self.peers.push(socket.id)
+}
+
+SimpleSignalServer.prototype._onOffer = function (socket, data) {
+  var self = this
+
+  if (self.listeners('request').length === 0) {
+    // Automatically forward if no handlers
+    if (!self._sockets[data.target]) return
+    self._sockets[data.target].emit('simple-signal[offer]', {
+      id: socket.id,
+      trackingNumber: data.trackingNumber,
+      signal: data.signal,
+      metadata: data.metadata || {}
     })
+    return
+  }
 
-    socket.on('simple-signal[offer]', function (data) {
-      if (!self._handlers['request']) {
-        // Automatically forward if no handlers
-        if (!self._sockets[data.target]) return
-        self._sockets[data.target].emit('simple-signal[offer]', {
-          id: socket.id,
-          trackingNumber: data.trackingNumber,
-          signal: data.signal,
-          metadata: data.metadata || {}
-        })
-        return
-      }
-
-      self._emit('request', {
-        initiator: {
-          id: socket.id
-        },
-        receiver: {
-          id: data.target
-        },
-        metadata: data.metadata || {},
-        forward: function (target, metadata) {
-          target = target || data.target || {}
-          metadata = metadata || data.metadata || {}
-          if (!self._sockets[target]) return
-          self._sockets[target].emit('simple-signal[offer]', {
-            id: socket.id,
-            trackingNumber: data.trackingNumber,
-            signal: data.signal,
-            metadata: metadata
-          })
-        }
-      })
-    })
-
-    socket.on('simple-signal[answer]', function (data) {
-      // Answers are always forwarded
-      if (!self._sockets[data.target]) return
-      self._sockets[data.target].emit('simple-signal[answer]', {
+  self.emit('request', {
+    initiator: {
+      id: socket.id
+    },
+    receiver: {
+      id: data.target
+    },
+    metadata: data.metadata || {},
+    forward: function (target, metadata) {
+      target = target || data.target || {}
+      metadata = metadata || data.metadata || {}
+      if (!self._sockets[target]) return
+      self._sockets[target].emit('simple-signal[offer]', {
         id: socket.id,
         trackingNumber: data.trackingNumber,
         signal: data.signal,
-        metadata: data.metadata || {}
+        metadata: metadata
       })
-    })
-    
-    self._emit('connect', socket)
+    }
   })
 }
 
-SimpleSignalServer.prototype._emit = function (event, data) {
-  var self = this
-  var fns = self._handlers[event] || []
-  var fn
-  var i
-
-  for (i = 0; i < fns.length; i++) {
-    fn = fns[i]
-    if (fn && typeof (fn) === 'function') {
-      fn(data)
-    }
-  }
-}
-
-SimpleSignalServer.prototype.on = function (event, handler) {
+SimpleSignalServer.prototype._onAnswer = function (socket, data) {
   var self = this
 
-  if (!self._handlers[event]) {
-    self._handlers[event] = []
-  }
-
-  if (handler) {
-    self._handlers[event].push(handler)
-  } else {
-    return new Promise(function (resolve, reject) {
-      self._handlers[event].push(resolve)
-    })
-  }
+  // Answers are always forwarded
+  if (!self._sockets[data.target]) return
+  self._sockets[data.target].emit('simple-signal[answer]', {
+    id: socket.id,
+    trackingNumber: data.trackingNumber,
+    signal: data.signal,
+    metadata: data.metadata || {}
+  })
 }

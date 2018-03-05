@@ -33,7 +33,7 @@ test('construct client', function (t) {
 })
 
 test('connect two clients', function (t) {
-  t.plan(8)
+  t.plan(7)
 
   t.timeoutAfter(10000)
 
@@ -47,25 +47,21 @@ test('connect two clients', function (t) {
   client1.on('ready', function (metadata) {
     client2 = new SimpleSignalClient(socket2)
 
-    t.equal(metadata, 'discovery metadata', 'discovery metadata should be "discovery metadata"')
+    t.equal(metadata, 'discovery metadata', 'discovery metadata is correct')
 
-    client2.on('ready')
-      .then(function () {
-        client2.connect(client1.id, {wrtc: wrtc}, {test: 'test metadata'})
-      })
-      .then(function () {
-        t.pass('chained promise called')
-      })
+    client2.on('ready', function () {
+      client2.connect(client1.id, {wrtc: wrtc}, {test: 'test metadata'})
+    })
 
     client1.on('request', function (request) {
-      t.equal(request.id, client2.id, 'id of request and client should be equal')
-      t.equal('test metadata', request.metadata.test, 'metadata should be "test metadata"')
-      request.accept({wrtc: wrtc}, 'answer metadata')
+      t.equal(request.id, client2.id, 'id of request and client are equal')
+      t.equal('test metadata', request.metadata.test, 'request metadata is correct')
+      request.accept({wrtc: wrtc}, 'peer metadata')
     })
 
     client2.on('peer', function (peer) {
       peer2 = peer
-      t.equal(peer.metadata, 'answer metadata', 'answer metadata should be "answer metadata"')
+      t.equal(peer.metadata, 'peer metadata', 'peer metadata is correct')
       t.equal(client1.id, peer.id, 'id of peer and client should be equal')
     })
 
@@ -98,7 +94,7 @@ test('connection redirect by server', function (t) {
   client1.on('ready', function () {
     client2 = new SimpleSignalClient(socket2)
 
-    client2.on('ready').then(function () {
+    client2.on('ready', function () {
       client2.connect('some invalid id (used promise)', {wrtc: wrtc}, {redirect: client1.id})
     })
 
@@ -107,7 +103,7 @@ test('connection redirect by server', function (t) {
       request.accept({wrtc: wrtc})
     })
 
-    client2.on('peer').then(function (peer) {
+    client2.on('peer', function (peer) {
       peer2 = peer
       t.equal(client1.id, peer.id, 'id of peer and client should be equal (used promise)')
     })

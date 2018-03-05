@@ -8,11 +8,13 @@
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "cuid": "^2.0.2",
+    "inherits": "^2.0.3",
+    "nanobus": "^4.3.3",
     "simple-peer": "^6.4.1"
   },
   "scripts": {
-    "build": "browserify src/simple-signal-client.js -t babelify -s SimpleSignalClient -r ./ | uglifyjs -m >  ../dist/simple-signal-client.min.js",
-    "build-dev": "browserify src/simple-signal-client.js -t babelify -s SimpleSignalClient -o ../dist/simple-signal-client.js",
+    "build": "browserify src/simple-signal-client.js -s SimpleSignalClient -r ./ | uglifyjs -m >  ../dist/simple-signal-client.min.js",
+    "build-dev": "browserify src/simple-signal-client.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
     "test": "npm run test-setup && npm run test-server && npm run test-standard && npm run test-node && npm run test-browser-local && npm run test-cleanup",
     "test-setup": "npm install && cd ../server && npm install && cd ../client",
     "test-server": "cd ../server && node test/test-server.js& SERVER_PID=$! && cd ../client",
@@ -25,7 +27,6 @@
     "test-cleanup": "kill $SERVER_PID"
   },
   "devDependencies": {
-    "babelify": "^7.3.0",
     "browserify": "^14.1.0",
     "electron-webrtc": "^0.3.0",
     "socket.io-client": "^1.7.3",
