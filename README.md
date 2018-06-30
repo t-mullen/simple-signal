@@ -17,12 +17,12 @@
 
 Server:
 ```
-npm install simple-signal-server
+npm install simple-signal-server --save
 ```
 
 Client (with Browserify):  
 ```
-npm install simple-signal-client
+npm install simple-signal-client --save
 ```
 
 ## Usage
@@ -174,11 +174,11 @@ Optional listener allows you to return additional discovery data when a new clie
 
 Any additional metadata passed by the discovering peer.
 
-#### `request.discover([metadata])`  
+#### `request.discover([discoveryData])`  
 
 Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*  
 
-Optional `metadata` is any serializable object to be passed along with the request.  
+Optional `discoveryData` is any serializable object to be passed along with the discovery response.  
 
 ### `signalServer.on('request', function (request) {})`  
 
