@@ -114,6 +114,10 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
   var peer = new SimplePeer(opts)
   self._peers[trackingNumber] = peer
 
+  peer.on('close', function () {
+    delete self._peers[trackingNumber]
+  })
+
   peer.on('signal', function (signal) {
     self.socket.emit('simple-signal[offer]', {
       signal: signal,
