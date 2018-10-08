@@ -60,7 +60,7 @@ SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
     }
   })
 
-  if (!self.peers.include(socket.id)) {
+  if (self.peers.indexOf(socket.id) === -1) {
     self.peers.push(socket.id)
   }
 }
