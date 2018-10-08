@@ -59,7 +59,10 @@ SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
       })
     }
   })
-  self.peers.push(socket.id)
+
+  if (!self.peers.include(socket.id)) {
+    self.peers.push(socket.id)
+  }
 }
 
 SimpleSignalServer.prototype._onOffer = function (socket, data) {
