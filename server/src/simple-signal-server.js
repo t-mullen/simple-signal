@@ -12,7 +12,6 @@ function SimpleSignalServer (io) {
   EventEmitter.call(self)
 
   self._sockets = {}
-  self.peers = []
 
   io.on('connection', self._onConnect.bind(self))
 }
@@ -59,7 +58,6 @@ SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
       })
     }
   })
-  self.peers.push(socket.id)
 }
 
 SimpleSignalServer.prototype._onOffer = function (socket, data) {
