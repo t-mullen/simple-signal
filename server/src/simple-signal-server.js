@@ -12,27 +12,30 @@ function SimpleSignalServer (io) {
   EventEmitter.call(self)
 
   self._sockets = {}
-  self.peers = []
 
   io.on('connection', self._onConnect.bind(self))
 }
 
 SimpleSignalServer.prototype._onConnect = function (socket) {
   var self = this
-  self._sockets[socket.id] = socket
 
-  socket.on('disconnect', self._onDisconnect.bind(self, socket))
-  socket.on('simple-signal[discover]', self._onDiscover.bind(self, socket))
-  socket.on('simple-signal[offer]', self._onOffer.bind(self, socket))
-  socket.on('simple-signal[answer]', self._onAnswer.bind(self, socket))
+  if (!self._sockets[socket.id]) {
+    self._sockets[socket.id] = socket
 
-  self.emit('connect', socket)
+    socket.on('disconnect', self._onDisconnect.bind(self, socket))
+    socket.on('simple-signal[discover]', self._onDiscover.bind(self, socket))
+    socket.on('simple-signal[offer]', self._onOffer.bind(self, socket))
+    socket.on('simple-signal[answer]', self._onAnswer.bind(self, socket))
+  
+    self.emit('connect', socket)
+  }
 }
 
 SimpleSignalServer.prototype._onDisconnect = function (socket) {
   var self = this
 
   delete self._sockets[socket.id]
+
   self.emit('disconnect', socket)
 }
 
@@ -59,7 +62,6 @@ SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
       })
     }
   })
-  self.peers.push(socket.id)
 }
 
 SimpleSignalServer.prototype._onOffer = function (socket, data) {
