@@ -64,18 +64,24 @@ SimpleSignalServer.prototype._onDiscover = function (socket, metadata) {
   })
 }
 
+SimpleSignalServer.prototype._forward = function(type, target, socket, data) {
+  var self = this
+
+  if (!self._sockets[target]) return
+  self._sockets[target].emit('simple-signal[' + type + ']', {
+    id: socket.id,
+    trackingNumber: data.trackingNumber,
+    signal: data.signal,
+    metadata: data.metadata || {}
+  })
+}
+
 SimpleSignalServer.prototype._onOffer = function (socket, data) {
   var self = this
 
   if (self.listeners('request').length === 0) {
     // Automatically forward if no handlers
-    if (!self._sockets[data.target]) return
-    self._sockets[data.target].emit('simple-signal[offer]', {
-      id: socket.id,
-      trackingNumber: data.trackingNumber,
-      signal: data.signal,
-      metadata: data.metadata || {}
-    })
+    self._forward('offer', data.target, socket, data)
     return
   }
 
@@ -88,15 +94,16 @@ SimpleSignalServer.prototype._onOffer = function (socket, data) {
     },
     metadata: data.metadata || {},
     forward: function (target, metadata) {
-      target = target || data.target || {}
-      metadata = metadata || data.metadata || {}
-      if (!self._sockets[target]) return
-      self._sockets[target].emit('simple-signal[offer]', {
-        id: socket.id,
-        trackingNumber: data.trackingNumber,
-        signal: data.signal,
-        metadata: metadata
-      })
+      target = target || data.target || null
+
+      // Use data.metadata unless metadata parameter is specified
+      var forwardData = Object.assign({}, data,
+        metadata
+        ? { metadata: metadata }
+        : {}
+      )
+
+      self._forward('offer', target, socket, forwardData)
     }
   })
 }
@@ -105,11 +112,5 @@ SimpleSignalServer.prototype._onAnswer = function (socket, data) {
   var self = this
 
   // Answers are always forwarded
-  if (!self._sockets[data.target]) return
-  self._sockets[data.target].emit('simple-signal[answer]', {
-    id: socket.id,
-    trackingNumber: data.trackingNumber,
-    signal: data.signal,
-    metadata: data.metadata || {}
-  })
+  self._forward('answer', data.target, socket, data)
 }
