@@ -33,6 +33,11 @@ function SimpleSignalClient (socket, metadata) {
   self.socket.on('simple-signal[answer]', self._onAnswer.bind(self))
 }
 
+SimpleSignalClient.prototype.peers = function () {
+  var self = this
+  return Object.keys(self._peers)
+}
+
 SimpleSignalClient.prototype._onDiscover = function (data) {
   var self = this
 
@@ -125,6 +130,18 @@ SimpleSignalClient.prototype.connect = function (id, opts, metadata) {
       target: id,
       metadata: metadata
     })
+  })
+}
+
+SimpleSignalClient.prototype.disconnect = function (id) {
+  var self = this
+  Object.keys(self._peers).forEach(trackingNumber => {
+    var peer = self._peers[trackingNumber]
+    console.log(peer.id, id)
+    if (peer.id === id) {
+      peer.destroy()
+      delete self._peers[trackingNumber]
+    }
   })
 }
 

@@ -122,6 +122,45 @@ test('connection redirect by server', function (t) {
   })
 })
 
+test('disconnect by client', function (t) {
+  t.plan(3)
+
+  t.timeoutAfter(10000)
+
+  var socket = io(TEST_SERVER_URL)
+  var socket2 = io(TEST_SERVER_URL)
+
+  var client1 = new SimpleSignalClient(socket, {})
+  var client2
+
+  client1.on('ready', function (metadata) {
+    client2 = new SimpleSignalClient(socket2)
+
+    client2.on('ready', function () {
+      client2.connect(client1.id, {wrtc: wrtc})
+    })
+    client1.on('request', function (request) {
+      request.accept({wrtc: wrtc})
+    })
+
+    client2.on('peer', function (peer) {
+      peer.on('connect', function () {
+        t.pass('got connect')
+        client2.disconnect(peer.id)
+      })
+      peer.on('close', function () {
+        t.pass('got close on client2')
+      })
+    })
+
+    client1.on('peer', function (peer) {
+      peer.on('close', function () {
+        t.pass('got close on client1')
+      })
+    })
+  })
+})
+
 test('SUMMARY', function (t) {
   t.end()
   if (process && process.exit) {
