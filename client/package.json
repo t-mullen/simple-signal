@@ -21,9 +21,7 @@
     "test-standard": "standard --fix \"src/*.js\" \"test/*.js\" \"../server/src/*.js\"",
     "test-browser": "airtap -- test/*.js",
     "test-browser-local": "airtap --local -- test/*.js",
-    "test-node": "npm run test-node-electron-webrtc && npm run test-node-wrtc",
-    "test-node-electron-webrtc": "WRTC=electron-webrtc tape test/*.js",
-    "test-node-wrtc": "WRTC=wrtc tape test/*.js",
+    "test-node": "WRTC=wrtc tape test/*.js",
     "test-cleanup": "kill $SERVER_PID"
   },
   "devDependencies": {
