@@ -1,6 +1,6 @@
 # simple-signal 
 
-[![Build Status](https://travis-ci.org/RationalCoding/simple-signal.svg?branch=master)](https://travis-ci.org/RationalCoding/simple-signal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Build Status](https://travis-ci.org/t-mullen/simple-signal.svg?branch=master)](https://travis-ci.org/t-mullen/simple-signal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
@@ -114,6 +114,12 @@ Request to connect to another client.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
+### `signalClient.disconnect(id)`  
+
+Disconnect from or cancel connection to a single client. 
+
+`id` is the `signalClient.id` of the other client.  
+
 ### `signalClient.on('ready', function (discoveryData) {})`  
 
 Fired when the client has connected to the server and done discovery.
@@ -153,6 +159,10 @@ Any metadata associated with the request/answer is available as `peer.metadata`.
 Initiate rediscovery.
 
 `metadata` is any discovery data returned from the server.  
+
+### `signalClient.peers()`  
+
+List all currently connecting/connected peers. Returns an array of `SimplePeer` objects.
 
 ## Server API
 
