@@ -1,7 +1,13 @@
 language: node_js
 sudo: false
 node_js:
-- '4'
+  - lts/*
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 before_script:
 - cd client && npm run test-setup
 - npm run test-server
