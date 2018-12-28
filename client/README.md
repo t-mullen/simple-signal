@@ -21,6 +21,8 @@ Client (with Browserify):
 npm install simple-signal-client --save
 ```
 
+Without Browserify, use [simple-signal-client.min.js](https://github.com/t-mullen/simple-signal/releases).
+
 ### Example
 A common signaling scheme is to connect two clients by having one client "call" the ID of another.
 
