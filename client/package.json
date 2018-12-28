@@ -1,6 +1,6 @@
 {
   "name": "simple-signal-client",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "socket.io signalling solution for simple-peer",
   "main": "src/simple-signal-client.js",
   "author": "Thomas Mullen",
@@ -13,16 +13,14 @@
     "simple-peer": "^9.2.0"
   },
   "scripts": {
-    "build": "browserify src/simple-signal-client.js -s SimpleSignalClient -r ./ | minify >  ../dist/simple-signal-client.min.js",
-    "build-dev": "browserify src/simple-signal-client.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
-    "test": "npm run test-setup && npm run test-server && npm run test-standard && npm run test-node && npm run test-browser-local && npm run test-cleanup",
-    "test-setup": "npm install && cd ../server && npm install && cd ../client",
-    "test-server": "cd ../server && node test/test-server.js& SERVER_PID=$! && cd ../client",
-    "test-standard": "standard --fix \"src/*.js\" \"test/*.js\" \"../server/src/*.js\"",
+    "build": "browserify src/index.js -s SimpleSignalClient | minify >  ../dist/simple-signal-client.min.js",
+    "build-dev": "browserify src/index.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
+    "test": "standard && npm run test-node && npm run test-browser",
+    "test-support-start": "node support/server.js& SERVER_PID=$!",
+    "test-support-stop": "kill $SERVER_PID",
     "test-browser": "airtap -- test/*.js",
     "test-browser-local": "airtap --local -- test/*.js",
-    "test-node": "WRTC=wrtc tape test/*.js",
-    "test-cleanup": "kill $SERVER_PID"
+    "test-node": "WRTC=wrtc tape test/*.js"
   },
   "devDependencies": {
     "airtap": "^0.1.0",
