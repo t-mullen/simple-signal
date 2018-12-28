@@ -8,9 +8,6 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-before_script:
-- cd client && npm run test-setup
-- npm run test-server
 script:
-- npm run test-standard
-- npm run test-node
+- cd client
+- npm run test
