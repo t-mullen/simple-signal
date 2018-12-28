@@ -15,9 +15,7 @@
   "scripts": {
     "build": "browserify src/index.js -s SimpleSignalClient | minify >  ../dist/simple-signal-client.min.js",
     "build-dev": "browserify src/index.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
-    "test": "standard && npm run test-node && npm run test-browser",
-    "test-support-start": "node support/server.js& SERVER_PID=$!",
-    "test-support-stop": "kill $SERVER_PID",
+    "test": "standard && npm run test-node",
     "test-browser": "airtap -- test/*.js",
     "test-browser-local": "airtap --local -- test/*.js",
     "test-node": "WRTC=wrtc tape test/*.js"

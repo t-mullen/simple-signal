@@ -8,5 +8,10 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+before_script:
+  - cd client && npm install && cd ../server && npm install && cd ../client
 script:
-- cd client && npm install && npm run test
+  - cd client
+  - node support/server.js & SERVER_PID=$!
+  - npm run test
+  - kill $SERVER_PID
