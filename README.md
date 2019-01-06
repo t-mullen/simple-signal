@@ -37,8 +37,8 @@ signalServer.on('discover', (request) => {
   request.discover(clientID, Array.from(allIDs)) // respond with id and list of other peers
 })
 
-signalServer.on('disconnect', (request) => {
-  const clientID = request.socket.id
+signalServer.on('disconnect', (socket) => {
+  const clientID = socket.id
   allIDs.delete(clientID)
 })
 
