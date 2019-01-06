@@ -80,6 +80,7 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
   peerOptions.initiator = true
 
   const sessionId = cuid() // TODO: Use crypto
+  var firstOffer = true
   const peer = this._peers[sessionId] = new SimplePeer(peerOptions)
 
   peer.on('close', () => {
@@ -88,7 +89,8 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
   })
 
   peer.on('signal', (signal) => {
-    const messageType = signal.sdp ? 'simple-signal[offer]' : 'simple-signal[signal]'
+    const messageType = signal.sdp && firstOffer ? 'simple-signal[offer]' : 'simple-signal[signal]'
+    if (signal.sdp) firstOffer = false
     this.socket.emit(messageType, {
       signal, metadata, sessionId, target
     })
