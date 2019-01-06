@@ -2,7 +2,7 @@
   "name": "simple-signal-server",
   "version": "2.0.0",
   "description": "socket.io signalling solution for simple-peer",
-  "main": "src/simple-signal-server.js",
+  "main": "src/index.js",
   "author": "Thomas Mullen",
   "license": "MIT",
   "dependencies": {
