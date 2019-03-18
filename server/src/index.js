@@ -23,9 +23,11 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
     this._sockets[id] = socket
     socket.clientId = id
 
-    socket.on('disconnect', () => {
-      this.emit('disconnect', socket)
-    })
+    socket.removeAllListeners('disconnect');
+    socket.removeAllListeners('simple-signal[offer]');
+    socket.removeAllListeners('simple-signal[signal]');
+
+    socket.on('disconnect', this._onDisconnect.bind(this, socket));
 
     socket.emit('simple-signal[discover]', { id, discoveryData })
 
@@ -41,7 +43,7 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
 }
 
 SimpleSignalServer.prototype._onOffer = function (socket, { sessionId, signal, target, metadata }) {
-  const request = { initiator: socket.clientId, target, metadata, socket } 
+  const request = { initiator: socket.clientId, target, metadata, socket }
   request.forward = (target=request.target, metadata=request.metadata) => {
     if (!this._sockets[target]) return
     this._sockets[target].emit('simple-signal[offer]', {
@@ -63,4 +65,8 @@ SimpleSignalServer.prototype._onSignal = function (socket, { target, sessionId, 
   this._sockets[target].emit('simple-signal[signal]', {
     sessionId, signal, metadata
   })
+}
+
+SimpleSignalServer.prototype._onDisconnect = function (socket) {
+  this.emit('disconnect', socket)
 }
