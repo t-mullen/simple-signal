@@ -37,8 +37,8 @@ signalServer.on('discover', (request) => {
   request.discover(clientID, Array.from(allIDs)) // respond with id and list of other peers
 })
 
-signalServer.on('disconnect', (request) => {
-  const clientID = request.socket.id
+signalServer.on('disconnect', (socket) => {
+  const clientID = socket.id
   allIDs.delete(clientID)
 })
 
@@ -78,7 +78,7 @@ Initiate discovery.
 
 `discoveryData` is any discovery data to be sent to the server.
 
-### `{ peer, metadata } = signalClient.connect(id, [metadata], [peerOptions])`  
+### `{ peer, metadata } = await signalClient.connect(id, [metadata], [peerOptions])`  
 Request to connect to another client. Returns a Promise.
 
 `id` is the `signalClient.id` of the other client.  
@@ -101,12 +101,19 @@ The id of the remote client's socket.
 #### `request.metadata`
 Any additional metadata passed by the requesting client or server.
 
-#### `{ peer, metadata } = request.accept([metadata], [peerOptions])`  
+#### `{ peer, metadata } = await request.accept([metadata], [peerOptions])`  
 Accept the request to connect. *Not calling this method will ignore the request.*  Returns a Promise.
 
 `metadata` is any serializable object to be passed along with the answer.
 
-`peerOptions` are the options to be passed to the `SimplePeer` constructor.  
+`peerOptions` are the options to be passed to the `SimplePeer` constructor.
+
+Promise will reject if the other side calls `reject()`.
+
+#### `request.reject([metadata])`  
+Rejects the request to connect. *Not calling this method will ignore the request.*
+
+`metadata` is any serializable object to be passed along with the rejection.
 
 ### `signalClient.peers()`  
 List all currently connecting/connected peers. Returns an array of `SimplePeer` objects.

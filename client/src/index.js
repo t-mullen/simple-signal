@@ -19,6 +19,7 @@ function SimpleSignalClient (socket) {
   this.socket.on('simple-signal[discover]', this._onDiscover.bind(this))
   this.socket.on('simple-signal[offer]', this._onOffer.bind(this))
   this.socket.on('simple-signal[signal]', this._onSignal.bind(this))
+  this.socket.on('simple-signal[reject]', this._onReject.bind(this))
 }
 
 SimpleSignalClient.prototype._onDiscover = function (data) {
@@ -31,6 +32,7 @@ SimpleSignalClient.prototype._onOffer = function ({ initiator, metadata, session
 
   const request = { initiator, metadata, sessionId }
   request.accept = this._accept.bind(this, request)
+  request.reject = this._reject.bind(this, request)
 
   this.emit('request', request)
 }
@@ -63,11 +65,26 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
   })
 }
 
+SimpleSignalClient.prototype._reject = function (request, metadata = {}) {
+  // clear signaling queue
+  delete this._sessionQueues[request.sessionId]
+  this.socket.emit('simple-signal[reject]', {
+    metadata,
+    sessionId: request.sessionId,
+    target: request.initiator
+  })
+}
+
+SimpleSignalClient.prototype._onReject = function ({ sessionId, metadata }) {
+  const peer = this._peers[sessionId]
+  if (peer) peer.reject(metadata)
+}
+
 SimpleSignalClient.prototype._onSignal = function ({ sessionId, signal, metadata }) {
   const peer = this._peers[sessionId]
   if (peer) {
     peer.signal(signal)
-    if (metadata && peer.resolveMetadata) peer.resolveMetadata(metadata)
+    if (metadata !== undefined && peer.resolveMetadata) peer.resolveMetadata(metadata)
   } else {
     this._sessionQueues[sessionId] = this._sessionQueues[sessionId] || []
     this._sessionQueues[sessionId].push(signal)
@@ -96,9 +113,14 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
     })
   })
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     peer.resolveMetadata = (metadata) => {
       resolve({ peer, metadata })
+    }
+    peer.reject = (metadata) => {
+      delete this._peers[sessionId]
+      peer.destroy()
+      reject({ metadata })
     }
   })
 }

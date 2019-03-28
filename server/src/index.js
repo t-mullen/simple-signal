@@ -33,6 +33,7 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
 
     socket.on('simple-signal[offer]', this._onOffer.bind(this, socket))
     socket.on('simple-signal[signal]', this._onSignal.bind(this, socket))
+    socket.on('simple-signal[reject]', this._onReject.bind(this, socket))
   }
 
   if (this.listeners('discover').length === 0) {
@@ -64,6 +65,15 @@ SimpleSignalServer.prototype._onSignal = function (socket, { target, sessionId, 
   // misc. signaling data is always forwarded
   this._sockets[target].emit('simple-signal[signal]', {
     sessionId, signal, metadata
+  })
+}
+
+SimpleSignalServer.prototype._onReject = function (socket, { target, sessionId, metadata }) {
+  if (!this._sockets[target]) return
+
+  // rejections are always forwarded
+  this._sockets[target].emit('simple-signal[reject]', {
+    sessionId, metadata
   })
 }
 
