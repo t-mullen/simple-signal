@@ -24,7 +24,7 @@ test('construct client', function (t) {
 })
 
 test('connect two clients', function (t) {
-  t.plan(11)
+  t.plan(14)
 
   const socket1 = io(TEST_SERVER_URL)
   const socket2 = io(TEST_SERVER_URL)
@@ -44,7 +44,7 @@ test('connect two clients', function (t) {
     t.equal(discoveryData, 'discovery metadata', 'discoveryData is correct')
 
     client2.on('discover', async (discoveryData) => {
-      t.equal(client2.id.slice(0, 3), 'abc', 'client1 id is correct')
+      t.equal(client2.id.slice(0, 3), 'abc', 'client2 id is correct')
       t.equal(discoveryData, 'discovery metadata', 'discoveryData is correct')
 
       client2.on('discover', async (request) => {
@@ -52,8 +52,12 @@ test('connect two clients', function (t) {
       })
 
       const { peer, metadata } = await client2.connect(client1.id, { test: 'a' }, config)
+      t.assert(peer.connected) // peer is ready
       t.assert(peer instanceof SimpleSignalClient.SimplePeer)
       t.equals(metadata.test, 'b', 'response metadata is correct')
+      peer.on('connect', () => { // connect event still fires
+        t.pass('connect event 2 fired')
+      })
     })
 
     client1.on('request', async (request) => {
@@ -65,11 +69,12 @@ test('connect two clients', function (t) {
       })
 
       const { peer, metadata } = await request.accept({ test: 'b' }, config)
+      t.assert(peer.connected) // peer is ready
       t.assert(peer instanceof SimpleSignalClient.SimplePeer)
       t.equal(metadata.test, 'a', 'request metadata is correct')
 
-      peer.on('connect', () => {
-        t.pass('peers connected')
+      peer.on('connect', () => { // connect event still fires
+        t.pass('connect event 1 fired')
         client1.destroy()
         client2.destroy()
         t.end()
@@ -128,7 +133,6 @@ test('connect resolves with null metadata', function (t) {
       const { metadata } = await client2.connect(client1.id, null, config)
       t.pass('connect resolved')
       t.equals(metadata, null)
-      t.end()
     })
 
     client1.on('request', async (request) => {

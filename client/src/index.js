@@ -61,7 +61,9 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
   delete this._sessionQueues[request.sessionId]
 
   return new Promise((resolve) => {
-    resolve({ peer, metadata: request.metadata })
+    this._onSafeConnect(peer, () => {
+      resolve({ peer, metadata: request.metadata })
+    })
   })
 }
 
@@ -115,13 +117,45 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
 
   return new Promise((resolve, reject) => {
     peer.resolveMetadata = (metadata) => {
-      resolve({ peer, metadata })
+      peer.resolveMetadata = null
+      this._onSafeConnect(peer, () => {
+        resolve({ peer, metadata })
+      })
     }
     peer.reject = (metadata) => {
       delete this._peers[sessionId]
       peer.destroy()
-      reject({ metadata })
+      reject({ metadata }) // eslint-disable-line
     }
+  })
+}
+
+SimpleSignalClient.prototype._onSafeConnect = function (peer, callback) {
+  // simple-signal caches stream and track events so they always come AFTER connect
+  const cachedEvents = []
+  function streamHandler (stream) {
+    cachedEvents.push({ name: 'stream', args: [stream] })
+  }
+  function trackHandler (track, stream) {
+    cachedEvents.push({ name: 'track', args: [track, stream] })
+  }
+  peer.on('stream', streamHandler)
+  peer.on('track', trackHandler)
+  setTimeout(() => {
+
+  }, 0)
+  peer.once('connect', () => {
+    setTimeout(() => {
+      peer.emit('connect') // expose missed 'connect' event to application
+      setTimeout(() => {
+        cachedEvents.forEach(({ name, args }) => { // replay any missed stream/track events
+          peer.emit(name, ...args)
+        })
+      }, 0)
+    }, 0)
+    peer.off('stream', streamHandler)
+    peer.off('track', trackHandler)
+    callback(peer)
   })
 }
 
