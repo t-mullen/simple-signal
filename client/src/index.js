@@ -141,9 +141,6 @@ SimpleSignalClient.prototype._onSafeConnect = function (peer, callback) {
   }
   peer.on('stream', streamHandler)
   peer.on('track', trackHandler)
-  setTimeout(() => {
-
-  }, 0)
   peer.once('connect', () => {
     setTimeout(() => {
       peer.emit('connect') // expose missed 'connect' event to application

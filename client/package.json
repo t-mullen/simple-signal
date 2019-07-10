@@ -1,6 +1,6 @@
 {
   "name": "simple-signal-client",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "socket.io signalling solution for simple-peer",
   "main": "src/index.js",
   "author": "Thomas Mullen",
