@@ -150,8 +150,8 @@ SimpleSignalClient.prototype._onSafeConnect = function (peer, callback) {
         })
       }, 0)
     }, 0)
-    peer.off('stream', streamHandler)
-    peer.off('track', trackHandler)
+    peer.removeListener('stream', streamHandler)
+    peer.removeListener('track', trackHandler)
     callback(peer)
   })
 }

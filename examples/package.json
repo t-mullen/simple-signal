@@ -1,0 +1,15 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "simple-signal-client.min.js",
+  "scripts": {
+    "lobbys": "simplehttpserver lobbys > /dev/null | node lobbys/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "simplehttpserver": "^0.3.0",
+    "socket.io": "^2.2.0"
+  }
+}
