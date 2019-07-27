@@ -46,8 +46,7 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
 SimpleSignalServer.prototype._onOffer = function (socket, { sessionId, signal, target, metadata }) {
   const request = { initiator: socket.clientId, target, metadata, socket }
   request.forward = (target=request.target, metadata=request.metadata) => {
-    if (!this._sockets[target]) return
-    this._sockets[target].emit('simple-signal[offer]', {
+    socket.to(target).emit('simple-signal[offer]', {
       initiator: socket.clientId, sessionId, signal, metadata
     })
   }
@@ -60,19 +59,15 @@ SimpleSignalServer.prototype._onOffer = function (socket, { sessionId, signal, t
 }
 
 SimpleSignalServer.prototype._onSignal = function (socket, { target, sessionId, signal, metadata }) {
-  if (!this._sockets[target]) return
-
   // misc. signaling data is always forwarded
-  this._sockets[target].emit('simple-signal[signal]', {
+  socket.to(target).emit('simple-signal[signal]', {
     sessionId, signal, metadata
   })
 }
 
 SimpleSignalServer.prototype._onReject = function (socket, { target, sessionId, metadata }) {
-  if (!this._sockets[target]) return
-
   // rejections are always forwarded
-  this._sockets[target].emit('simple-signal[reject]', {
+  socket.to(target).emit('simple-signal[reject]', {
     sessionId, metadata
   })
 }
