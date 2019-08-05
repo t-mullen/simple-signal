@@ -5,13 +5,23 @@ const SimplePeer = require('simple-peer')
 
 inherits(SimpleSignalClient, EventEmitter)
 
-function SimpleSignalClient (socket) {
+/**
+ * SimpleSignalClient
+ *
+ * @param {Socket} socket Socket
+ * @param {Object} options
+ * @param {number} options.connectionTimeout=10000 Defines a timeout for establishing a connection.
+ */
+function SimpleSignalClient (socket, options = {}) {
   if (!(this instanceof SimpleSignalClient)) return new SimpleSignalClient(socket)
 
   EventEmitter.call(this)
 
+  const { connectionTimeout = 10 * 1000 } = options
+
   this.id = null
   this.socket = socket
+  this._connectionTimeout = connectionTimeout
 
   this._peers = {}
   this._sessionQueues = {}
@@ -31,6 +41,14 @@ SimpleSignalClient.prototype._onOffer = function ({ initiator, metadata, session
   this._sessionQueues[sessionId] = [signal]
 
   const request = { initiator, metadata, sessionId }
+
+  request.timer = null
+  if (this._connectionTimeout !== -1) {
+    request.timer = setTimeout(() => {
+      request.reject({ reason: 'timeout' })
+    }, this._connectionTimeout)
+  }
+
   request.accept = this._accept.bind(this, request)
   request.reject = this._reject.bind(this, request)
 
@@ -50,6 +68,8 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
     })
   })
   peer.on('close', () => {
+    if (request.timer) clearTimeout(request.timer)
+
     peer.destroy()
     delete this._peers[request.sessionId]
   })
@@ -62,12 +82,16 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
 
   return new Promise((resolve) => {
     this._onSafeConnect(peer, () => {
+      if (request.timer) clearTimeout(request.timer)
+
       resolve({ peer, metadata: request.metadata })
     })
   })
 }
 
 SimpleSignalClient.prototype._reject = function (request, metadata = {}) {
+  if (request.timer) clearTimeout(request.timer)
+
   // clear signaling queue
   delete this._sessionQueues[request.sessionId]
   this.socket.emit('simple-signal[reject]', {
@@ -102,7 +126,16 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
   var firstOffer = true
   const peer = this._peers[sessionId] = new SimplePeer(peerOptions)
 
+  let timer = null
+  if (this._connectionTimeout !== -1) {
+    timer = setTimeout(() => {
+      peer.reject({ reason: 'timeout' })
+    }, this._connectionTimeout)
+  }
+
   peer.on('close', () => {
+    if (timer) clearTimeout(timer)
+
     peer.destroy()
     delete this._peers[sessionId]
   })
@@ -117,12 +150,17 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
 
   return new Promise((resolve, reject) => {
     peer.resolveMetadata = (metadata) => {
+      if (timer) clearTimeout(timer)
+
       peer.resolveMetadata = null
       this._onSafeConnect(peer, () => {
         resolve({ peer, metadata })
       })
     }
+
     peer.reject = (metadata) => {
+      if (timer) clearTimeout(timer)
+
       delete this._peers[sessionId]
       peer.destroy()
       reject({ metadata }) // eslint-disable-line
