@@ -1,4 +1,4 @@
-# simple-signal 
+# simple-signal
 
 [![Build Status](https://travis-ci.org/t-mullen/simple-signal.svg?branch=master)](https://travis-ci.org/t-mullen/simple-signal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -16,7 +16,7 @@ Server:
 npm install simple-signal-server --save
 ```
 
-Client (with Browserify):  
+Client (with Browserify):
 ```
 npm install simple-signal-client --save
 ```
@@ -65,43 +65,47 @@ signalClient.on('request', async (request) => {
 
 ## Client API
 
-### `signalClient = new SignalClient(socket)`  
-Create a new signalling client.  
+### `signalClient = new SignalClient(socket, [options])`
+Create a new signalling client.
 
 Required `socket` is a **socket.io-client** instance.
 
-### `signalClient.id`  
+Options:
+
+- `connectionTimeout: number = 10000`: Defines the time to wait to establish a connection.
+
+### `signalClient.id`
 The identifying string for this client's socket. `null` until discovery completes.
 
-### `signalClient.discover(discoveryData)`  
+### `signalClient.discover(discoveryData)`
 Initiate discovery.
 
 `discoveryData` is any discovery data to be sent to the server.
 
-### `{ peer, metadata } = await signalClient.connect(id, [metadata], [peerOptions])`  
+### `{ peer, metadata } = await signalClient.connect(id, [metadata], [peerOptions])`
 Request to connect to another client. Returns a Promise.
 
-`id` is the `signalClient.id` of the other client.  
+`id` is the `signalClient.id` of the other client.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
-Optional `peerOptions` are the options to be passed to the `SimplePeer` constructor.  
+Optional `peerOptions` are the options to be passed to the `SimplePeer` constructor.
 
-### `signalClient.on('discover', function (discoveryData) {})`  
+### `signalClient.on('discover', function (discoveryData) {})`
 Fired when the client has connected to the server and done discovery.
 
 `discoveryData` is any additional data that has been passed by the server.
 
-### `signalClient.on('request', function (request) {})`  
-Fired on receiving a request to connect from another client. 
+### `signalClient.on('request', function (request) {})`
+Fired on receiving a request to connect from another client.
 
-#### `request.initiator`  
-The id of the remote client's socket.  
+#### `request.initiator`
+The id of the remote client's socket.
 
 #### `request.metadata`
 Any additional metadata passed by the requesting client or server.
 
-#### `{ peer, metadata } = await request.accept([metadata], [peerOptions])`  
+#### `{ peer, metadata } = await request.accept([metadata], [peerOptions])`
 Accept the request to connect. *Not calling this method will ignore the request.*  Returns a Promise.
 
 `metadata` is any serializable object to be passed along with the answer.
@@ -110,55 +114,55 @@ Accept the request to connect. *Not calling this method will ignore the request.
 
 Promise will reject if the other side calls `reject()`.
 
-#### `request.reject([metadata])`  
+#### `request.reject([metadata])`
 Rejects the request to connect. *Not calling this method will ignore the request.*
 
 `metadata` is any serializable object to be passed along with the rejection.
 
-### `signalClient.peers()`  
+### `signalClient.peers()`
 List all currently connecting/connected peers. Returns an array of `SimplePeer` objects.
 
 ## Server API
 
-### `signalServer = require('simple-signal-server')(io)`  
-Create a new signalling server.  
+### `signalServer = require('simple-signal-server')(io)`
+Create a new signalling server.
 
 Required `io` is a **socket.io** instance.
 
-### `signalServer.on('discover', function (request) {})`  
+### `signalServer.on('discover', function (request) {})`
 Optional listener allows you to return additional discovery data when a new client connects or rediscovers.
 
-#### `request.socket`  
+#### `request.socket`
 The `socket.io` socket used by the client initiating discovery.
 
 #### `request.discoveryData`
 Any additional data passed by the discovering client. A good place for credentials.
 
-#### `request.discover([id], [discoveryData])`  
-Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*  
+#### `request.discover([id], [discoveryData])`
+Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*
 
 Optional `id` is the client ID that will be used to identify the client. Default is `socket.id`.
 
 Optional `discoveryData` is any serializable object to be passed along with the discovery response. A good place for credentials.
 
-### `signalServer.on('request', function (request) {})`  
-Optional listener allows you to filter connection requests on the server.  
+### `signalServer.on('request', function (request) {})`
+Optional listener allows you to filter connection requests on the server.
 
-#### `request.initiator`  
+#### `request.initiator`
 `id` of the socket used by the client initiating the request.
 
-#### `request.target`  
+#### `request.target`
 `id` of the socket used by the client that will receive the request.
 
 #### `request.metadata`
 Any additional metadata passed by the requesting client.
 
-#### `request.forward([id], [metadata])`  
-Allow the request to continue. *Listening to "request" and not calling this method will block the request.*  
+#### `request.forward([id], [metadata])`
+Allow the request to continue. *Listening to "request" and not calling this method will block the request.*
 
-Optional `id` is the receiver of the request, allowing you to reroute requests to different clients. 
+Optional `id` is the receiver of the request, allowing you to reroute requests to different clients.
 
-Optional `metadata` is any serializable object to be passed along with the request.  
+Optional `metadata` is any serializable object to be passed along with the request.
 
-### `signalServer.on('disconnect', function (socket) {})`  
+### `signalServer.on('disconnect', function (socket) {})`
 Listens to disconnected sockets. Similar to the `socket.io` `disconnect` event, but only fires for clients that completed discovery.
