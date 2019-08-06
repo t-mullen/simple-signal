@@ -173,6 +173,69 @@ test('reject connection', function (t) {
   })
 })
 
+test('timeout connection on connect', function (t) {
+  t.plan(2)
+
+  const socket1 = io(TEST_SERVER_URL)
+  const socket2 = io(TEST_SERVER_URL)
+
+  const client1 = new SimpleSignalClient(socket1)
+  const client2 = new SimpleSignalClient(socket2, { connectionTimeout: 2000 })
+
+  client1.discover()
+  client1.on('discover', (discoveryData) => {
+    client2.discover()
+
+    client2.on('discover', async (discoveryData) => {
+      try {
+        await client2.connect(client1.id, null, config)
+        t.fail('request not rejected')
+      } catch (err) {
+        t.equals(err.metadata.code, SimpleSignalClient.ERR_CONNECTION_TIMEOUT)
+        t.end()
+      }
+    })
+
+    client1.on('request', async (request) => {
+      t.pass('new request, do nothing')
+    })
+  })
+})
+
+test('timeout connection on accept', function (t) {
+  t.plan(2)
+
+  const socket1 = io(TEST_SERVER_URL)
+  const socket2 = io(TEST_SERVER_URL)
+
+  const client1 = new SimpleSignalClient(socket1, { connectionTimeout: 2000 })
+  const client2 = new SimpleSignalClient(socket2)
+
+  client1.discover()
+  client1.on('discover', (discoveryData) => {
+    client2.discover()
+
+    client2.on('discover', async (discoveryData) => {
+      try {
+        await client2.connect(client1.id, null, config)
+        t.fail('connection not premature closed')
+      } catch (err) {
+        t.equals(err.metadata.code, SimpleSignalClient.ERR_PREMATURE_CLOSE)
+      }
+    })
+
+    client1.on('request', async (request) => {
+      try {
+        client2.destroy() // Simulate a disconnection of the remote peer in the middle negotiation.
+        await request.accept(null, config)
+        t.fail('request not timeout')
+      } catch (err) {
+        t.equals(err.metadata.code, SimpleSignalClient.ERR_CONNECTION_TIMEOUT)
+      }
+    })
+  })
+})
+
 test('SUMMARY', function (t) {
   t.end()
   if (process && process.exit) {
