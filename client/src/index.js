@@ -64,11 +64,8 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
     })
   })
 
-  peer.on('close', () => {
-    this._clearTimer(request.sessionId)
-
-    peer.destroy()
-    delete this._peers[request.sessionId]
+  peer.once('close', () => {
+    this._closePeer(request.sessionId)
   })
 
   // clear signaling queue
@@ -82,6 +79,10 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
       this._clearTimer(request.sessionId)
 
       resolve({ peer, metadata: request.metadata })
+    })
+
+    peer.once('close', () => {
+      reject({ metadata: { code: ERR_PREMATURE_CLOSE } })
     })
 
     this._startTimer(request.sessionId, metadata => reject({ metadata }))
@@ -124,20 +125,8 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
   var firstOffer = true
   const peer = this._peers[sessionId] = new SimplePeer(peerOptions)
 
-  const _closePeer = () => {
-    this._clearTimer(sessionId)
-
-    delete this._peers[sessionId]
-    peer.destroy()
-  }
-
-  peer.on('close', () => {
-    if (peer.reject) {
-      // If the promise didn't finish, we reject it as a premature close error.
-      peer.reject({ code: ERR_PREMATURE_CLOSE })
-    } else {
-      _closePeer()
-    }
+  peer.once('close', () => {
+    this._closePeer(sessionId)
   })
 
   peer.on('signal', (signal) => {
@@ -160,8 +149,12 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
 
     peer.reject = (metadata) => {
       reject({ metadata }) // eslint-disable-line
-      _closePeer()
+      this._closePeer(sessionId)
     }
+
+    peer.once('close', () => {
+      reject({ metadata: { code: ERR_PREMATURE_CLOSE } })
+    })
 
     this._startTimer(sessionId, metadata => peer.reject(metadata))
   })
@@ -191,6 +184,13 @@ SimpleSignalClient.prototype._onSafeConnect = function (peer, callback) {
     peer.removeListener('track', trackHandler)
     callback(peer)
   })
+}
+
+SimpleSignalClient.prototype._closePeer = function (sessionId) {
+  const peer = this._peers[sessionId]
+  this._clearTimer(sessionId)
+  delete this._peers[sessionId]
+  if (peer) peer.destroy()
 }
 
 SimpleSignalClient.prototype._startTimer = function (sessionId, cb) {
