@@ -85,7 +85,10 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
       reject({ metadata: { code: ERR_PREMATURE_CLOSE } })
     })
 
-    this._startTimer(request.sessionId, metadata => reject({ metadata }))
+    this._startTimer(request.sessionId, metadata => {
+      reject({ metadata })
+      this._closePeer(request.sessionId)
+    })
   })
 }
 
