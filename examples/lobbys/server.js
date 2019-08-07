@@ -34,5 +34,5 @@ signal.on('discover', (request) => {
 	}
 })
 
-console.log('Running lobbys demo!')
+console.log('Running lobbys demo! Open http://localhost:8000')
 io.listen(3000)
