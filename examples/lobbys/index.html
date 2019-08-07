@@ -38,10 +38,11 @@
 		}
 
 		// creates a video element, sets a mediastream as it's source, and appends it to the DOM
-		function createVideoElement(container, mediaStream) {
+		function createVideoElement(container, mediaStream, muted=false) {
 			const videoElement = document.createElement('video')
 			videoElement.autoplay = true
 			videoElement.srcObject = mediaStream
+			videoElement.muted = muted
 			container.appendChild(videoElement)
 			return videoElement
 		}
@@ -100,7 +101,7 @@
 
 		// request local webcam
 		navigator.getUserMedia({ audio: true, video: true }, (localStream) => {
-			const videoElement = createVideoElement(localVideoContainer, localStream) // display local video
+			const videoElement = createVideoElement(localVideoContainer, localStream, true) // display local video
 			signalClient.discover(null)  // begin discovering rooms
 
 			signalClient.on('request', async (request) => {

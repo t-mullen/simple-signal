@@ -14,6 +14,7 @@ function SimpleSignalServer (io) {
 
   io.on('connection', (socket) => {
     socket.on('simple-signal[discover]', this._onDiscover.bind(this, socket))
+    socket.on('disconnect', this._onDisconnect.bind(this, socket));
   })
 }
 
@@ -23,11 +24,9 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
     this._sockets[id] = socket
     socket.clientId = id
 
-    socket.removeAllListeners('disconnect');
     socket.removeAllListeners('simple-signal[offer]');
     socket.removeAllListeners('simple-signal[signal]');
-
-    socket.on('disconnect', this._onDisconnect.bind(this, socket));
+    socket.removeAllListeners('simple-signal[reject]');
 
     socket.emit('simple-signal[discover]', { id, discoveryData })
 
