@@ -10,12 +10,12 @@
     "cuid": "^2.0.2",
     "inherits": "^2.0.3",
     "nanobus": "^4.3.3",
-    "simple-peer": "^9.2.0"
+    "simple-peer": "^9.6.2"
   },
   "scripts": {
     "build": "browserify src/index.js -s SimpleSignalClient | minify >  ../dist/simple-signal-client.min.js",
     "build-dev": "browserify src/index.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
-    "test": "standard && node support/server.js > /dev/null | npm run test-node",
+    "test": "node support/server.js > /dev/null | npm run test-node",
     "test-browser": "airtap -- test/*.js",
     "test-browser-local": "airtap --local -- test/*.js",
     "test-node": "WRTC=wrtc tape test/*.js"
@@ -28,6 +28,6 @@
     "socket.io-client": "^1.7.3",
     "standard": "^8.6.0",
     "tape": "^4.6.3",
-    "wrtc": "^0.3.2"
+    "wrtc": "^0.4.2"
   }
 }
