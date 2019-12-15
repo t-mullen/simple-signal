@@ -1,7 +1,6 @@
 # simple-signal
 
 [![Build Status](https://travis-ci.org/t-mullen/simple-signal.svg?branch=master)](https://travis-ci.org/t-mullen/simple-signal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Donate A Coffee](https://img.shields.io/badge/-donate%20a%20coffee-orange)](https://www.buymeacoffee.com/tmullen)
 
 **Easy signalling for [simple-peer](https://github.com/feross/simple-peer) using [socket.io](https://github.com/socketio/socket.io).**
 
