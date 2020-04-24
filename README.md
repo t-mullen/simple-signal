@@ -8,7 +8,7 @@
 - Streamlines WebRTC signaling without losing any flexibility.
 - Exposes the entire **simple-peer** API.
 - Useful for managing multiple connections.
-- Uses modern ES6 async/await.
+- Uses modern async/await.
 
 ## Install
 Server:
