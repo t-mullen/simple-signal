@@ -5,7 +5,7 @@ var EventEmitter = require('nanobus')
 
 inherits(SimpleSignalServer, EventEmitter)
 
-function SimpleSignalServer (io) {
+function SimpleSignalServer(io) {
   if (!(this instanceof SimpleSignalServer)) return new SimpleSignalServer(io)
 
   EventEmitter.call(this)
@@ -20,7 +20,7 @@ function SimpleSignalServer (io) {
 
 SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
   const discoveryRequest = { socket, discoveryData }
-  discoveryRequest.discover = (id=socket.id, discoveryData={}) => {
+  discoveryRequest.discover = (id = socket.id, discoveryData = {}) => {
     this._sockets[id] = socket
     socket.clientId = id
 
@@ -44,7 +44,7 @@ SimpleSignalServer.prototype._onDiscover = function (socket, discoveryData) {
 
 SimpleSignalServer.prototype._onOffer = function (socket, { sessionId, signal, target, metadata }) {
   const request = { initiator: socket.clientId, target, metadata, socket }
-  request.forward = (target=request.target, metadata=request.metadata) => {
+  request.forward = (target = request.target, metadata = request.metadata) => {
     if (!this._sockets[target]) return
     this._sockets[target].emit('simple-signal[offer]', {
       initiator: socket.clientId, sessionId, signal, metadata
@@ -77,5 +77,8 @@ SimpleSignalServer.prototype._onReject = function (socket, { target, sessionId, 
 }
 
 SimpleSignalServer.prototype._onDisconnect = function (socket) {
+  if (socket.clientId) {
+    delete this._sockets[socket.clientId]
+  }
   this.emit('disconnect', socket)
 }
