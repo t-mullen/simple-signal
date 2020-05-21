@@ -61,6 +61,8 @@ signalClient.on('request', async (request) => {
   const { peer } = await request.accept() // Accept the incoming request
   peer // this is a fully-signaled simple-peer object (non-initiator side)
 })
+
+signalClient.discover()
 ```
 
 ## Client API
