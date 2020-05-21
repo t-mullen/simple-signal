@@ -5,18 +5,14 @@ var signal = new SimpleSignalServer(io)
 var PORT = 3000
 
 signal.on('request', function (request) {
-  if (request.metadata && request.metadata.redirect) {
-    request.forward(request.metadata.redirect)
-  } else {
-    request.forward()
-  }
+  request.forward()
 })
 
 signal.on('discover', function (request) {
   if (request.discoveryData === null) {
-    request.discover('abc' + Math.random(), null)
+    request.discover(null)
   } else {
-    request.discover('abc' + Math.random(), 'discovery metadata')
+    request.discover('discovery metadata')
   }
 })
 

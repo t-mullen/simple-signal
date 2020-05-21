@@ -40,11 +40,11 @@ test('connect two clients', function (t) {
       t.fail('client1 got excess discover events')
     })
 
-    t.equal(client1.id.slice(0, 3), 'abc', 'client1 id is correct')
+    t.equal(client1.id, socket1.id, 'client1 id is correct')
     t.equal(discoveryData, 'discovery metadata', 'discoveryData is correct')
 
     client2.on('discover', async (discoveryData) => {
-      t.equal(client2.id.slice(0, 3), 'abc', 'client2 id is correct')
+      t.equal(client2.id, socket2.id, 'client2 id is correct')
       t.equal(discoveryData, 'discovery metadata', 'discoveryData is correct')
 
       client2.on('discover', async (request) => {
@@ -75,37 +75,6 @@ test('connect two clients', function (t) {
 
       peer.on('connect', () => { // connect event still fires
         t.pass('connect event 1 fired')
-        client1.destroy()
-        client2.destroy()
-        t.end()
-      })
-    })
-  })
-})
-
-test('connection redirect by server', function (t) {
-  t.plan(2)
-
-  const socket1 = io(TEST_SERVER_URL)
-  const socket2 = io(TEST_SERVER_URL)
-
-  const client1 = new SimpleSignalClient(socket1)
-  const client2 = new SimpleSignalClient(socket2)
-
-  client1.discover()
-  client1.on('discover', function () {
-    client2.discover()
-
-    client2.on('discover', function () {
-      client2.connect('some invalid id', { redirect: client1.id }, config)
-    })
-
-    client1.on('request', async function (request) {
-      t.equal(request.initiator, client2.id, 'id of request and client should be equal')
-      const { peer } = await request.accept({}, config)
-
-      peer.on('connect', () => {
-        t.pass('peers connected')
         client1.destroy()
         client2.destroy()
         t.end()

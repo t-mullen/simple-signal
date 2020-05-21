@@ -8,7 +8,7 @@
 - Streamlines WebRTC signaling without losing any flexibility.
 - Exposes the entire **simple-peer** API.
 - Useful for managing multiple connections.
-- Uses modern ES6 async/await.
+- Uses modern async/await.
 
 ## Install
 Server:
@@ -32,9 +32,9 @@ const signalServer = require('simple-signal-server')(io)
 const allIDs = new Set()
 
 signalServer.on('discover', (request) => {
-  const clientID = request.socket.id // you can use any kind of identity, here we use socket.id
+  const clientID = request.socket.id // clients are uniquely identified by socket.id
   allIDs.add(clientID) // keep track of all connected peers
-  request.discover(clientID, Array.from(allIDs)) // respond with id and list of other peers
+  request.discover(Array.from(allIDs)) // respond with id and list of other peers
 })
 
 signalServer.on('disconnect', (socket) => {
@@ -61,6 +61,8 @@ signalClient.on('request', async (request) => {
   const { peer } = await request.accept() // Accept the incoming request
   peer // this is a fully-signaled simple-peer object (non-initiator side)
 })
+
+signalClient.discover()
 ```
 
 ## Client API
@@ -138,10 +140,8 @@ The `socket.io` socket used by the client initiating discovery.
 #### `request.discoveryData`
 Any additional data passed by the discovering client. A good place for credentials.
 
-#### `request.discover([id], [discoveryData])`
+#### `request.discover([discoveryData])`
 Allow discovery to continue. *Listening to "discover" and not calling this method will block discovery.*
-
-Optional `id` is the client ID that will be used to identify the client. Default is `socket.id`.
 
 Optional `discoveryData` is any serializable object to be passed along with the discovery response. A good place for credentials.
 
@@ -157,10 +157,8 @@ Optional listener allows you to filter connection requests on the server.
 #### `request.metadata`
 Any additional metadata passed by the requesting client.
 
-#### `request.forward([id], [metadata])`
+#### `request.forward([metadata])`
 Allow the request to continue. *Listening to "request" and not calling this method will block the request.*
-
-Optional `id` is the receiver of the request, allowing you to reroute requests to different clients.
 
 Optional `metadata` is any serializable object to be passed along with the request.
 
