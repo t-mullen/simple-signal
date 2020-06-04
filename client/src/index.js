@@ -124,7 +124,7 @@ SimpleSignalClient.prototype.connect = function (target, metadata = {}, peerOpti
 
   peerOptions.initiator = true
 
-  const sessionId = cuid() // TODO: Use crypto
+  const sessionId = cuid()
   var firstOffer = true
   const peer = this._peers[sessionId] = new SimplePeer(peerOptions)
 
