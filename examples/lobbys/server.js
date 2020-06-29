@@ -13,12 +13,12 @@ const rooms = {
 // after that, it will request peers in a specific room
 signal.on('discover', (request) => {
 	if (!request.discoveryData) { // return list of rooms
-		request.discover(request.socket.id, {
+		request.discover({
 			rooms: Object.keys(rooms)
 		})
 	} else { // return peers in a room
 		const roomID = request.discoveryData
-		request.discover(request.socket.id, {
+		request.discover({
 			roomResponse: roomID, // return the roomID so client can correlate discovery data
 			peers: Array.from(rooms[roomID])
 		})
