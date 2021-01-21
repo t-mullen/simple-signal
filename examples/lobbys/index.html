@@ -17,7 +17,9 @@
 	<body>
 			<p>Select a lobby to join!</p>
 			<div id="list"></div>
-			<div id="localVideo"></div>
+			<div id="localVideo">
+				<video id="video-local" width="80%" playsinline autoplay muted controls style="display:none;"></video>
+			</div>
 			<div id="remoteVideos"></div>
 	</body>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
@@ -26,7 +28,7 @@
 		const roomContainer = document.getElementById('list')
 		const localVideoContainer = document.getElementById('localVideo')
 		const remoteVideoContainer = document.getElementById('remoteVideos')
-
+		const localVideoElement = document.getElementById("video-local");
 		// creates a DOM element to allow the user to see/join rooms
 		function createRoomElement (id) {
 			const element = document.createElement('div')
@@ -98,10 +100,10 @@
 			}
 			signalClient.addListener('discover', onRoomPeers)
 		}
-
-		// request local webcam
-		navigator.getUserMedia({ audio: true, video: true }, (localStream) => {
-			const videoElement = createVideoElement(localVideoContainer, localStream, true) // display local video
+	
+		function userMediaProcess(localStream, localVideoElement) {
+			localVideoElement.style.display = "block"
+			localVideoElement.srcObject = localStream;
 			signalClient.discover(null)  // begin discovering rooms
 
 			signalClient.on('request', async (request) => {
@@ -118,6 +120,22 @@
 					roomElement.addEventListener('click', () => joinRoom(roomID, localStream)) // register a click handler to join room
 				})
 			})
-		}, () => alert('No webcam access!'))
+		}
+	
+		// request local webcam
+		try {
+			navigator.mediaDevices.getUserMedia({
+				video: true,
+				audio: false
+			}).then(localStream => {
+				userMediaProcess(localStream, localVideoElement);
+			}).catch(err => {
+				alert("No webcam access!");
+			});
+		}
+		catch (err) {
+			alert("No webcam access!");
+		}
+
 	</script>
 </html>
