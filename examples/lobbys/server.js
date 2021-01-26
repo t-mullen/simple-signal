@@ -34,5 +34,14 @@ signal.on('discover', (request) => {
 	}
 })
 
+signal.on('disconnect', (request) => {
+	const roomID = request.roomID
+	const peerID = request.conn.id
+	if (roomID) {
+		console.log(peerID, 'left room', roomID)
+		rooms[roomID].delete(peerID)
+	}
+})
+
 console.log('Running lobbys demo! Open http://localhost:8000')
 io.listen(3000)

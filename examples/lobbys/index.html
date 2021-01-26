@@ -21,7 +21,7 @@
 			<div id="remoteVideos"></div>
 	</body>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-	<script src="https://github.com/t-mullen/simple-signal/releases/latest/download/simple-signal-client.min.js"></script>
+	<script src="js/simple-signal-client.js"></script>
 	<script>
 		const roomContainer = document.getElementById('list')
 		const localVideoContainer = document.getElementById('localVideo')
@@ -64,9 +64,14 @@
 		// connects to a peer and handles media streams
 		async function connectToPeer(peerID, localStream) {
 			console.log('connecting to peer', peerID)
-			const { peer } = await signalClient.connect(peerID, currentRoom) // connect to the peer
-			console.log('connected to peer', peerID)
-			onPeer(peer, localStream)
+			// connect to the peer
+			signalClient.connect(peerID, currentRoom).then(({ peer }) => {
+				console.log('connected to peer', peerID)
+				onPeer(peer, localStream)
+			}).catch(err => {
+				console.log("connecteing error");
+				console.log(err);
+			});
 		}
 
 		function joinRoom (roomID, localStream) {

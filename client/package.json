@@ -15,6 +15,7 @@
   "scripts": {
     "build": "browserify src/index.js -s SimpleSignalClient | minify >  ../dist/simple-signal-client.min.js",
     "build-dev": "browserify src/index.js -s SimpleSignalClient -o ../dist/simple-signal-client.js",
+    "build-lobbys": "browserify src/index.js -s SimpleSignalClient -o ../examples/lobbys/js/simple-signal-client.js",
     "test": "node support/server.js > /dev/null | npm run test-node",
     "test-browser": "airtap -- test/*.js",
     "test-browser-local": "airtap --local -- test/*.js",
