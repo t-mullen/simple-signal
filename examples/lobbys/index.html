@@ -43,6 +43,7 @@
 		function createVideoElement(container, mediaStream, muted=false) {
 			const videoElement = document.createElement('video')
 			videoElement.autoplay = true
+			videoElement.playsInline = true
 			videoElement.srcObject = mediaStream
 			videoElement.muted = muted
 			container.appendChild(videoElement)
