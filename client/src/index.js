@@ -64,6 +64,10 @@ SimpleSignalClient.prototype._accept = function (request, metadata = {}, peerOpt
     })
   })
 
+  peer.on('error', (err) => {
+    console.log(err)
+  })
+
   peer.once('close', () => {
     this._closePeer(request.sessionId)
   })
