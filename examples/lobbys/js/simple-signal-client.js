@@ -2754,7 +2754,12 @@
               // At least give some kind of context to the user
               var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
               err.context = er;
-              throw err;
+              if (er.code === "ERR_DATA_CHANNEL") {
+                console.log("ERR_DATA_CHANNEL Error")
+              } else {
+                throw err;
+              }
+
             }
           }
         }
